@@ -28,8 +28,8 @@ DAMAGE.
 
 #ifndef CMD_LINE_PARSER_INCLUDED
 #define CMD_LINE_PARSER_INCLUDED
-#include <stdarg.h>
-#include <string.h>
+#include <cstdarg>
+#include <cstring>
 
 #include "Geometry.h"
 

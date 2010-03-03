@@ -131,9 +131,9 @@ int Execute(int argc,char* argv[])
 	cmdLineFloat SamplesPerNode(1.0f),Scale(1.25f);
 	char* paramNames[]=
 	{
-		"in","depth","out","refine","noResetSamples","noClipTree",
-		"binary","solverDivide","isoDivide","scale","verbose",
-		"kernelDepth","samplesPerNode","confidence"
+		(char *)"in",(char *)"depth",(char *)"out",(char *)"refine",(char *)"noResetSamples",(char *)"noClipTree",
+		(char *)"binary",(char *)"solverDivide",(char *)"isoDivide",(char *)"scale",(char *)"verbose",
+		(char *)"kernelDepth",(char *)"samplesPerNode",(char *)"confidence"
 	};
 	cmdLineReadable* params[]=
 	{
