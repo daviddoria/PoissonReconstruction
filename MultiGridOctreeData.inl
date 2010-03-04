@@ -30,6 +30,12 @@ DAMAGE.
 #include "time.h"
 #include "MemoryUsage.h"
 
+#include <vtkSmartPointer.h>
+#include <vtkXMLPolyDataReader.h>
+#include <vtkPolyData.h>
+#include <vtkPointData.h>
+#include <vtkFloatArray.h>
+
 #define ITERATION_POWER 1.0/3
 #define MEMORY_ALLOCATOR_BLOCK_SIZE 1<<12
 
@@ -44,37 +50,54 @@ const Real ROUND_EPS=Real(1e-5);
 /////////////////////
 // SortedTreeNodes //
 /////////////////////
-SortedTreeNodes::SortedTreeNodes(void){
+SortedTreeNodes::SortedTreeNodes(void)
+{
 	nodeCount=NULL;
 	treeNodes=NULL;
 	maxDepth=0;
 }
-SortedTreeNodes::~SortedTreeNodes(void){
+
+SortedTreeNodes::~SortedTreeNodes(void)
+{
 	if(nodeCount){delete[] nodeCount;}
 	if(treeNodes){delete[] treeNodes;}
 	nodeCount=NULL;
 	treeNodes=NULL;
 }
-void SortedTreeNodes::set(TreeOctNode& root,const int& setIndex){
-	if(nodeCount){delete[] nodeCount;}
-	if(treeNodes){delete[] treeNodes;}
+
+void SortedTreeNodes::set(TreeOctNode& root,const int& setIndex)
+{
+	if(nodeCount)
+    {delete[] nodeCount;}
+    
+	if(treeNodes)
+    {delete[] treeNodes;}
+    
 	maxDepth=root.maxDepth()+1;
 	nodeCount=new int[maxDepth+1];
 	treeNodes=new TreeOctNode*[root.nodes()];
 
 	TreeOctNode* temp=root.nextNode();
 	int i,cnt=0;
-	while(temp){
+	while(temp)
+    {
 		treeNodes[cnt++]=temp;
 		temp=root.nextNode(temp);
 	}
 	qsort(treeNodes,cnt,sizeof(const TreeOctNode*),TreeOctNode::CompareForwardPointerDepths);
-	for(i=0;i<=maxDepth;i++){nodeCount[i]=0;}
-	for(i=0;i<cnt;i++){
-		if(setIndex){treeNodes[i]->nodeData.nodeIndex=i;}
+    
+	for(i=0;i<=maxDepth;i++)
+    {nodeCount[i]=0;}
+    
+	for(i=0;i<cnt;i++)
+    {
+		if(setIndex)
+        {treeNodes[i]->nodeData.nodeIndex=i;}
 		nodeCount[treeNodes[i]->depth()+1]++;
 	}
-	for(i=1;i<=maxDepth;i++){nodeCount[i]+=nodeCount[i-1];}
+    
+	for(i=1;i<=maxDepth;i++)
+    {nodeCount[i]+=nodeCount[i-1];}
 }
 
 
@@ -82,7 +105,8 @@ void SortedTreeNodes::set(TreeOctNode& root,const int& setIndex){
 // TreeNodeData //
 //////////////////
 int TreeNodeData::UseIndex=1;
-TreeNodeData::TreeNodeData(void){
+TreeNodeData::TreeNodeData(void)
+{
 	if(UseIndex){
 		nodeIndex=-1;
 		centerWeightContribution=0;
@@ -90,7 +114,8 @@ TreeNodeData::TreeNodeData(void){
 	else{mcIndex=0;}
 	value=0;
 }
-TreeNodeData::~TreeNodeData(void){;}
+TreeNodeData::~TreeNodeData(void)
+{;}
 
 
 ////////////
@@ -100,27 +125,37 @@ template<int Degree>
 double Octree<Degree>::maxMemoryUsage=0;
 
 template<int Degree>
-double Octree<Degree>::MemoryUsage(void){
+double Octree<Degree>::MemoryUsage(void)
+{
 	double mem=MemoryInfo::Usage()/(1<<20);
-	if(mem>maxMemoryUsage){maxMemoryUsage=mem;}
+	if(mem>maxMemoryUsage)
+    {maxMemoryUsage=mem;}
 	return mem;
 }
 
 template<int Degree>
-Octree<Degree>::Octree(void){
+Octree<Degree>::Octree(void)
+{
 	radius=0;
 	width=0;
 	postNormalSmooth=0;
 }
 
 template<int Degree>
-void Octree<Degree>::setNodeIndices(TreeOctNode& node,int& idx){
+void Octree<Degree>::setNodeIndices(TreeOctNode& node,int& idx)
+{
 	node.nodeData.nodeIndex=idx;
 	idx++;
-	if(node.children){for(int i=0;i<Cube::CORNERS;i++){setNodeIndices(node.children[i],idx);}}
+	if(node.children)
+    {for(int i=0;i<Cube::CORNERS;i++)
+    {setNodeIndices(node.children[i],idx);
+    }
+    }
 }
+
 template<int Degree>
-int Octree<Degree>::NonLinearSplatOrientedPoint(TreeOctNode* node,const Point3D<Real>& position,const Point3D<Real>& normal){
+int Octree<Degree>::NonLinearSplatOrientedPoint(TreeOctNode* node,const Point3D<Real>& position,const Point3D<Real>& normal)
+{
 	double x,dxdy,dxdydz,dx[DIMENSION][3];
 	int i,j,k;
 	TreeOctNode::Neighbors& neighbors=neighborKey.setNeighbors(node);
@@ -130,21 +165,27 @@ int Octree<Degree>::NonLinearSplatOrientedPoint(TreeOctNode* node,const Point3D<
 
 	node->centerAndWidth(center,w);
 	width=w;
-	for(int i=0;i<3;i++){
+	for(int i=0;i<3;i++)
+    {
 		x=(center.coords[i]-position.coords[i]-width)/width;
 		dx[i][0]=1.125+1.500*x+0.500*x*x;
 		x=(center.coords[i]-position.coords[i])/width;
 		dx[i][1]=0.750        -      x*x;
 		dx[i][2]=1.0-dx[i][1]-dx[i][0];
 	}
-	for(i=0;i<3;i++){
-		for(j=0;j<3;j++){
+	for(i=0;i<3;i++)
+    {
+		for(j=0;j<3;j++)
+        {
 			dxdy=dx[0][i]*dx[1][j];
-			for(k=0;k<3;k++){
-				if(neighbors.neighbors[i][j][k]){
+			for(k=0;k<3;k++)
+            {
+				if(neighbors.neighbors[i][j][k])
+                {
 					dxdydz=dxdy*dx[2][k];
 					int idx=neighbors.neighbors[i][j][k]->nodeData.nodeIndex;
-					if(idx<0){
+					if(idx<0)
+                    {
 						Point3D<Real> n;
 						n.coords[0]=n.coords[1]=n.coords[2]=0;
 						idx=neighbors.neighbors[i][j][k]->nodeData.nodeIndex=int(normals->size());
@@ -161,7 +202,8 @@ int Octree<Degree>::NonLinearSplatOrientedPoint(TreeOctNode* node,const Point3D<
 }
 template<int Degree>
 void Octree<Degree>::NonLinearSplatOrientedPoint(const Point3D<Real>& position,const Point3D<Real>& normal,const int& splatDepth,const Real& samplesPerNode,
-												 const int& minDepth,const int& maxDepth){
+												 const int& minDepth,const int& maxDepth)
+{
 	double dx;
 	Point3D<Real> n;
 	TreeOctNode* temp;
@@ -173,8 +215,10 @@ void Octree<Degree>::NonLinearSplatOrientedPoint(const Point3D<Real>& position,c
 	myWidth=Real(1.0);
 
 	temp=&tree;
-	while(temp->depth()<splatDepth){
-		if(!temp->children){
+	while(temp->depth()<splatDepth)
+    {
+		if(!temp->children)
+        {
 			printf("Octree<Degree>::NonLinearSplatOrientedPoint error\n");
 			return;
 		}
@@ -191,22 +235,32 @@ void Octree<Degree>::NonLinearSplatOrientedPoint(const Point3D<Real>& position,c
 	Real alpha,newDepth;
 	NonLinearGetSampleDepthAndWeight(temp,position,samplesPerNode,newDepth,alpha);
 
-	if(newDepth<minDepth){newDepth=Real(minDepth);}
-	if(newDepth>maxDepth){newDepth=Real(maxDepth);}
+	if(newDepth<minDepth)
+    {newDepth=Real(minDepth);}
+    
+	if(newDepth>maxDepth)
+    {newDepth=Real(maxDepth);}
+    
 	int topDepth=int(ceil(newDepth));
 
 	dx=1.0-(topDepth-newDepth);
-	if(topDepth<=minDepth){
+	if(topDepth<=minDepth)
+    {
 		topDepth=minDepth;
 		dx=1;
 	}
-	else if(topDepth>maxDepth){
+	else if(topDepth>maxDepth)
+    {
 		topDepth=maxDepth;
 		dx=1;
 	}
-	while(temp->depth()>topDepth){temp=temp->parent;}
-	while(temp->depth()<topDepth){
-		if(!temp->children){temp->initChildren();}
+	while(temp->depth()>topDepth)
+    {temp=temp->parent;}
+    
+	while(temp->depth()<topDepth)
+    {
+		if(!temp->children)
+        {temp->initChildren();}
 		int cIndex=TreeOctNode::CornerIndex(myCenter,position);
 		temp=&temp->children[cIndex];
 		myWidth/=2;
@@ -218,26 +272,36 @@ void Octree<Degree>::NonLinearSplatOrientedPoint(const Point3D<Real>& position,c
 		else		{myCenter.coords[2]-=myWidth/2;}
 	}
 	width=1.0/(1<<temp->depth());
-	for(i=0;i<DIMENSION;i++){n.coords[i]=normal.coords[i]*alpha/Real(pow(width,3))*Real(dx);}
+	for(i=0;i<DIMENSION;i++)
+    {n.coords[i]=normal.coords[i]*alpha/Real(pow(width,3))*Real(dx);}
+    
 	NonLinearSplatOrientedPoint(temp,position,n);
-	if(fabs(1.0-dx)>EPSILON){
+	if(fabs(1.0-dx)>EPSILON)
+    {
 		dx=Real(1.0-dx);
 		temp=temp->parent;
 		width=1.0/(1<<temp->depth());
 
-		for(i=0;i<DIMENSION;i++){n.coords[i]=normal.coords[i]*alpha/Real(pow(width,3))*Real(dx);}
+		for(i=0;i<DIMENSION;i++)
+        {n.coords[i]=normal.coords[i]*alpha/Real(pow(width,3))*Real(dx);}
+        
 		NonLinearSplatOrientedPoint(temp,position,n);
 	}
 }
+
 template<int Degree>
-void Octree<Degree>::NonLinearGetSampleDepthAndWeight(TreeOctNode* node,const Point3D<Real>& position,const Real& samplesPerNode,Real& depth,Real& weight){
+void Octree<Degree>::NonLinearGetSampleDepthAndWeight(TreeOctNode* node,const Point3D<Real>& position,const Real& samplesPerNode,Real& depth,Real& weight)
+{
 	TreeOctNode* temp=node;
 	weight=Real(1.0)/NonLinearGetSampleWeight(temp,position);
-	if(weight>=samplesPerNode+1){depth=Real(temp->depth()+log(weight/(samplesPerNode+1))/log(double(1<<(DIMENSION-1))));}
-	else{
+	if(weight>=samplesPerNode+1)
+    {depth=Real(temp->depth()+log(weight/(samplesPerNode+1))/log(double(1<<(DIMENSION-1))));}
+	else
+    {
 		Real oldAlpha,newAlpha;
 		oldAlpha=newAlpha=weight;
-		while(newAlpha<(samplesPerNode+1) && temp->parent){
+		while(newAlpha<(samplesPerNode+1) && temp->parent)
+        {
 			temp=temp->parent;
 			oldAlpha=newAlpha;
 			newAlpha=Real(1.0)/NonLinearGetSampleWeight(temp,position);
@@ -248,7 +312,8 @@ void Octree<Degree>::NonLinearGetSampleDepthAndWeight(TreeOctNode* node,const Po
 }
 
 template<int Degree>
-Real Octree<Degree>::NonLinearGetSampleWeight(TreeOctNode* node,const Point3D<Real>& position){
+Real Octree<Degree>::NonLinearGetSampleWeight(TreeOctNode* node,const Point3D<Real>& position)
+{
 	Real weight=0;
 	double x,dxdy,dx[DIMENSION][3];
 	int i,j,k;
@@ -259,7 +324,8 @@ Real Octree<Degree>::NonLinearGetSampleWeight(TreeOctNode* node,const Point3D<Re
 	node->centerAndWidth(center,w);
 	width=w;
 
-	for(i=0;i<DIMENSION;i++){
+	for(i=0;i<DIMENSION;i++)
+    {
 		x=(center.coords[i]-position.coords[i]-width)/width;
 		dx[i][0]=1.125+1.500*x+0.500*x*x;
 		x=(center.coords[i]-position.coords[i])/width;
@@ -267,11 +333,15 @@ Real Octree<Degree>::NonLinearGetSampleWeight(TreeOctNode* node,const Point3D<Re
 		dx[i][2]=1.0-dx[i][1]-dx[i][0];
 	}
 
-	for(i=0;i<3;i++){
-		for(j=0;j<3;j++){
+	for(i=0;i<3;i++)
+    {
+		for(j=0;j<3;j++)
+        {
 			dxdy=dx[0][i]*dx[1][j];
-			for(k=0;k<3;k++){
-				if(neighbors.neighbors[i][j][k]){
+			for(k=0;k<3;k++)
+            {
+				if(neighbors.neighbors[i][j][k])
+                {
 					weight+=Real(dxdy*dx[2][k]*neighbors.neighbors[i][j][k]->nodeData.centerWeightContribution);
 				}
 			}
@@ -281,7 +351,8 @@ Real Octree<Degree>::NonLinearGetSampleWeight(TreeOctNode* node,const Point3D<Re
 }
 
 template<int Degree>
-int Octree<Degree>::NonLinearUpdateWeightContribution(TreeOctNode* node,const Point3D<Real>& position,const Real& weight){
+int Octree<Degree>::NonLinearUpdateWeightContribution(TreeOctNode* node,const Point3D<Real>& position,const Real& weight)
+{
 	int i,j,k;
 	TreeOctNode::Neighbors& neighbors=neighborKey.setNeighbors(node);
 	double x,dxdy,dx[DIMENSION][3];
@@ -291,7 +362,8 @@ int Octree<Degree>::NonLinearUpdateWeightContribution(TreeOctNode* node,const Po
 	node->centerAndWidth(center,w);
 	width=w;
 
-	for(i=0;i<DIMENSION;i++){
+	for(i=0;i<DIMENSION;i++)
+    {
 		x=(center.coords[i]-position.coords[i]-width)/width;
 		dx[i][0]=1.125+1.500*x+0.500*x*x;
 		x=(center.coords[i]-position.coords[i])/width;
@@ -299,10 +371,13 @@ int Octree<Degree>::NonLinearUpdateWeightContribution(TreeOctNode* node,const Po
 		dx[i][2]=1.0-dx[i][1]-dx[i][0];
 	}
 
-	for(i=0;i<3;i++){
-		for(j=0;j<3;j++){
+	for(i=0;i<3;i++)
+    {
+		for(j=0;j<3;j++)
+        {
 			dxdy=dx[0][i]*dx[1][j]*weight;
-			for(k=0;k<3;k++){
+			for(k=0;k<3;k++)
+            {
 				if(neighbors.neighbors[i][j][k]){neighbors.neighbors[i][j][k]->nodeData.centerWeightContribution+=Real(dxdy*dx[2][k]);}
 			}
 		}
@@ -313,149 +388,250 @@ int Octree<Degree>::NonLinearUpdateWeightContribution(TreeOctNode* node,const Po
 template<int Degree>
 int Octree<Degree>::setTree(char* fileName,const int& maxDepth,const int& binary,
 							const int& kernelDepth,const Real& samplesPerNode,const Real& scaleFactor,Point3D<Real>& center,Real& scale,
-							const int& resetSamples,const int& useConfidence){
+							const int& resetSamples,const int& useConfidence)
+{
+  vtkSmartPointer<vtkXMLPolyDataReader> reader = 
+      vtkSmartPointer<vtkXMLPolyDataReader>::New();
+  reader->SetFileName(fileName);
+  reader->Update();
+  
+  vtkSmartPointer<vtkPolyData> data = reader->GetOutput();
+  
+   vtkSmartPointer<vtkFloatArray> dataNormals = 
+      vtkFloatArray::SafeDownCast(data->GetPointData()->GetNormals());
+  
+  Point3D<Real> min,max,position,normal,myCenter;
+  
+  Real myWidth;
 
-	Point3D<Real> min,max,position,normal,myCenter;
-	Real myWidth;
-	int i,cnt=0;
-	TreeOctNode* temp;
-	int splatDepth=0;
-	FILE* fp;
-	float c[2*DIMENSION];
+  TreeOctNode* temp;
+  int splatDepth=0;
 
-	TreeNodeData::UseIndex=1;
-	neighborKey.set(maxDepth);
-	splatDepth=kernelDepth;
-	if(splatDepth<0){splatDepth=0;}
-	if(binary){fp=fopen(fileName,"rb");}
-	else{fp=fopen(fileName,"r");}
-	if(!fp){return 0;}
+  TreeNodeData::UseIndex=1;
+  neighborKey.set(maxDepth);
+  splatDepth=kernelDepth;
+  if(splatDepth<0)
+    {
+    splatDepth=0;
+    }
+    
+  // Get the center and scale
+  double bounds[6];
+  data->GetBounds(bounds); //xmin, xmax, ymin, ymax, zmin, zmax
+  
+  min.coords[0] = bounds[0];
+  max.coords[0] = bounds[1];
+  min.coords[1] = bounds[2];
+  max.coords[1] = bounds[3];
+  min.coords[2] = bounds[4];
+  max.coords[2] = bounds[5];
+  
+  DumpOutput("Setting bounding box\n");
+  
+  for(unsigned int i = 0; i < DIMENSION; i++)
+    {
+      if(scale<max.coords[i]-min.coords[i])
+        {
+        scale=Real(max.coords[i]-min.coords[i]);
+        }
+      center.coords[i]=Real(max.coords[i]+min.coords[i])/2.0;
+    }
+    
+  scale*=scaleFactor;
+  for(unsigned int dim = 0; dim < DIMENSION; dim++)
+    {
+    center.coords[dim] -= scale/2.0;
+    }
+    
+  if(splatDepth>0)
+    {
+      DumpOutput("Setting sample weights\n");
+      
+      for(vtkIdType p = 0; p < data->GetNumberOfPoints(); p++)
+        {
+        double coordinate[3];
+        data->GetPoint(p, coordinate);
+        
+        double n[3];
+        dataNormals->GetTuple(p, n);
 
-	DumpOutput("Setting bounding box\n");
-	// Read through once to get the center and scale
-	while(1){
-		if(binary){if(fread(c,sizeof(float),2*DIMENSION,fp)!=6){break;}}
-		else{if(fscanf(fp," %f %f %f %f %f %f ",&c[0],&c[1],&c[2],&c[3],&c[4],&c[5])!=2*DIMENSION){break;}}
-		for(i=0;i<DIMENSION;i++){
-			if(!cnt || c[i]<min.coords[i]){min.coords[i]=c[i];}
-			if(!cnt || c[i]>max.coords[i]){max.coords[i]=c[i];}
-		}
-		cnt++;
-	}
-	for(i=0;i<DIMENSION;i++){
-		if(!i || scale<max.coords[i]-min.coords[i]){scale=Real(max.coords[i]-min.coords[i]);}
-		center.coords[i]=Real(max.coords[i]+min.coords[i])/2;
-	}
-	DumpOutput("Samples: %d\n",cnt);
-	scale*=scaleFactor;
-	for(i=0;i<DIMENSION;i++){center.coords[i]-=scale/2;}
-	if(splatDepth>0){
-		DumpOutput("Setting sample weights\n");
-		cnt=0;
-		fseek(fp,SEEK_SET,0);
-		while(1){
-			if(binary){if(fread(c,sizeof(float),2*DIMENSION,fp)!=2*DIMENSION){break;}}
-			else{if(fscanf(fp," %f %f %f %f %f %f ",&c[0],&c[1],&c[2],&c[3],&c[4],&c[5])!=2*DIMENSION){break;}}
-			for(i=0;i<DIMENSION;i++){
-				position.coords[i]=(c[i]-center.coords[i])/scale;
-				normal.coords[i]=c[DIMENSION+i];
-			}
-			myCenter.coords[0]=myCenter.coords[1]=myCenter.coords[2]=Real(0.5);
-			myWidth=Real(1.0);
-			for(i=0;i<DIMENSION;i++){if(position.coords[i]<myCenter.coords[i]-myWidth/2 || position.coords[i]>myCenter.coords[i]+myWidth/2){break;}}
-			if(i!=DIMENSION){continue;}
-			temp=&tree;
-			int d=0;
-			Real weight=Real(1.0);
-			if(useConfidence){weight=Real(Length(normal));}
-			while(d<splatDepth){
-				NonLinearUpdateWeightContribution(temp,position,weight);
-				if(!temp->children){temp->initChildren();}
-				int cIndex=TreeOctNode::CornerIndex(myCenter,position);
-				temp=&temp->children[cIndex];
-				myWidth/=2;
-				if(cIndex&1){myCenter.coords[0]+=myWidth/2;}
-				else		{myCenter.coords[0]-=myWidth/2;}
-				if(cIndex&2){myCenter.coords[1]+=myWidth/2;}
-				else		{myCenter.coords[1]-=myWidth/2;}
-				if(cIndex&4){myCenter.coords[2]+=myWidth/2;}
-				else		{myCenter.coords[2]-=myWidth/2;}
-				d++;
-			}
-			NonLinearUpdateWeightContribution(temp,position,weight);
-			cnt++;
-		}
-	}
+        for(unsigned int dim = 0; dim < DIMENSION; dim++)
+          {
+          position.coords[dim]=(coordinate[dim]-center.coords[dim])/scale;
+          normal.coords[dim]=n[dim];
+          }
+      
+        myCenter.coords[0]=myCenter.coords[1]=myCenter.coords[2]=Real(0.5);
+        myWidth=Real(1.0);
+        for(unsigned int dim = 0; dim < DIMENSION; dim++)
+          {
+            if(position.coords[dim]<myCenter.coords[dim]-myWidth/2.0 || position.coords[dim]>myCenter.coords[dim]+myWidth/2.0)
+            {
+            break;
+            }
+          }
 
-	DumpOutput("Adding Points and Normals\n");
-	normals=new std::vector<Point3D<Real> >();
-	cnt=0;
-	fseek(fp,SEEK_SET,0);
-	while(1){
-		if(binary){if(fread(c,sizeof(float),2*DIMENSION,fp)!=2*DIMENSION){break;}}
-		else{if(fscanf(fp," %f %f %f %f %f %f ",&c[0],&c[1],&c[2],&c[3],&c[4],&c[5])!=2*DIMENSION){break;}}
-		for(i=0;i<DIMENSION;i++){
-			position.coords[i]=(c[i]-center.coords[i])/scale;
-			normal.coords[i]=c[DIMENSION+i];
-		}
-		myCenter.coords[0]=myCenter.coords[1]=myCenter.coords[2]=Real(0.5);
-		myWidth=Real(1.0);
-		for(i=0;i<DIMENSION;i++){if(position.coords[i]<myCenter.coords[i]-myWidth/2 || position.coords[i]>myCenter.coords[i]+myWidth/2){break;}}
-		if(i!=DIMENSION){continue;}
-		Real l=Real(Length(normal));
-		if(l<EPSILON){continue;}
-		if(!useConfidence){
-			normal.coords[0]/=l;
-			normal.coords[1]/=l;
-			normal.coords[2]/=l;
-		}
-		l=Real(2<<maxDepth);
-		normal.coords[0]*=l;
-		normal.coords[1]*=l;
-		normal.coords[2]*=l;
+        temp=&tree;
+        int d=0;
+        Real weight=Real(1.0);
+        if(useConfidence)
+          {
+          weight=Real(Length(normal));
+          }
+        while(d<splatDepth)
+          {
+          NonLinearUpdateWeightContribution(temp,position,weight);
+          if(!temp->children)
+            {
+            temp->initChildren();
+            }
+          int cIndex=TreeOctNode::CornerIndex(myCenter,position);
+          temp=&temp->children[cIndex];
+          myWidth/=2;
+          if(cIndex&1)
+            {
+            myCenter.coords[0]+=myWidth/2;
+            }
+          else
+            {
+            myCenter.coords[0]-=myWidth/2;
+            }
+          if(cIndex&2)
+            {
+            myCenter.coords[1]+=myWidth/2;
+            }
+          else
+            {
+            myCenter.coords[1]-=myWidth/2;
+            }
+          if(cIndex&4)
+            {
+            myCenter.coords[2]+=myWidth/2;
+            }
+          else
+            {
+            myCenter.coords[2]-=myWidth/2;
+            }
+          d++;
+        }
+        NonLinearUpdateWeightContribution(temp,position,weight);
+    }
+  }
 
-		if(resetSamples && samplesPerNode>0 && splatDepth){
-			NonLinearSplatOrientedPoint(position,normal,splatDepth,samplesPerNode,1,maxDepth);
-		}
-		else{
-			Real alpha=1;
-			temp=&tree;
-			int d=0;
-			if(splatDepth){
-				while(d<splatDepth){
-					int cIndex=TreeOctNode::CornerIndex(myCenter,position);
-					temp=&temp->children[cIndex];
-					myWidth/=2;
-					if(cIndex&1){myCenter.coords[0]+=myWidth/2;}
-					else		{myCenter.coords[0]-=myWidth/2;}
-					if(cIndex&2){myCenter.coords[1]+=myWidth/2;}
-					else		{myCenter.coords[1]-=myWidth/2;}
-					if(cIndex&4){myCenter.coords[2]+=myWidth/2;}
-					else		{myCenter.coords[2]-=myWidth/2;}
-					d++;
-				}
-				alpha=NonLinearGetSampleWeight(temp,position);
-			}
-			for(i=0;i<DIMENSION;i++){normal.coords[i]*=alpha;}
-			while(d<maxDepth){
-				if(!temp->children){temp->initChildren();}
-				int cIndex=TreeOctNode::CornerIndex(myCenter,position);
-				temp=&temp->children[cIndex];
-				myWidth/=2;
-				if(cIndex&1){myCenter.coords[0]+=myWidth/2;}
-				else		{myCenter.coords[0]-=myWidth/2;}
-				if(cIndex&2){myCenter.coords[1]+=myWidth/2;}
-				else		{myCenter.coords[1]-=myWidth/2;}
-				if(cIndex&4){myCenter.coords[2]+=myWidth/2;}
-				else		{myCenter.coords[2]-=myWidth/2;}
-				d++;
-			}
-			NonLinearSplatOrientedPoint(temp,position,normal);
-		}
-	}
-	DumpOutput("Memory Usage: %.3f MB\n",float(MemoryUsage()));
-	fclose(fp);
-	return cnt;
+  DumpOutput("Adding Points and Normals\n");
+  this->normals=new std::vector<Point3D<Real> >();
+  
+  for(vtkIdType p = 0; p < data->GetNumberOfPoints(); p++)
+    {
+    double coordinate[3];
+    data->GetPoint(p, coordinate);
+    
+    double n[3];
+    dataNormals->GetTuple(p, n);
+    
+    for(unsigned int dim = 0; dim < DIMENSION; dim++)
+      {
+      position.coords[dim]=(coordinate[dim]-center.coords[dim])/scale;
+      normal.coords[dim]=n[dim];
+      }
+      
+    myCenter.coords[0]=myCenter.coords[1]=myCenter.coords[2]=Real(0.5);
+    myWidth=Real(1.0);
+    
+    for(unsigned int dim = 0; dim < DIMENSION; dim++)
+      {
+      if(position.coords[dim]<myCenter.coords[dim]-myWidth/2.0 || position.coords[dim]>myCenter.coords[dim]+myWidth/2.0)
+        {
+        break;
+        }
+      }
+
+    Real l=Real(Length(normal));
+    if(l<EPSILON)
+      {
+      continue;
+      }
+    if(!useConfidence)
+      {
+      normal.coords[0]/=l;
+      normal.coords[1]/=l;
+      normal.coords[2]/=l;
+      }
+    l=Real(2<<maxDepth);
+    normal.coords[0]*=l;
+    normal.coords[1]*=l;
+    normal.coords[2]*=l;
+
+    if(resetSamples && samplesPerNode>0 && splatDepth)
+      {
+      NonLinearSplatOrientedPoint(position,normal,splatDepth,samplesPerNode,1,maxDepth);
+      }
+    else
+      {
+        Real alpha=1;
+        temp=&tree;
+        int d=0;
+        if(splatDepth)
+          {
+          while(d<splatDepth)
+            {
+            int cIndex=TreeOctNode::CornerIndex(myCenter,position);
+            temp=&temp->children[cIndex];
+            myWidth/=2;
+            if(cIndex&1){myCenter.coords[0]+=myWidth/2;}
+            else		{myCenter.coords[0]-=myWidth/2;}
+            if(cIndex&2){myCenter.coords[1]+=myWidth/2;}
+            else		{myCenter.coords[1]-=myWidth/2;}
+            if(cIndex&4){myCenter.coords[2]+=myWidth/2;}
+            else		{myCenter.coords[2]-=myWidth/2;}
+            d++;
+            }
+          alpha=NonLinearGetSampleWeight(temp,position);
+          }
+        for(unsigned int dim = 0; dim < DIMENSION; dim++)
+          {
+          normal.coords[dim] *= alpha;
+          }
+        while(d<maxDepth)
+          {
+            if(!temp->children)
+              {
+              temp->initChildren();
+              }
+            int cIndex=TreeOctNode::CornerIndex(myCenter,position);
+            temp=&temp->children[cIndex];
+            myWidth/=2;
+            if(cIndex&1)
+              {
+              myCenter.coords[0]+=myWidth/2;
+              }
+            else
+              {
+              myCenter.coords[0]-=myWidth/2;
+              }
+            if(cIndex&2)
+              {
+              myCenter.coords[1]+=myWidth/2;
+              }
+            else
+              {
+              myCenter.coords[1]-=myWidth/2;
+              }
+            if(cIndex&4)
+              {
+              myCenter.coords[2]+=myWidth/2;
+              }
+            else
+              {
+              myCenter.coords[2]-=myWidth/2;
+              }
+            d++;
+        }
+        NonLinearSplatOrientedPoint(temp,position,normal);
+    }
+  }
+
+  return 1; //success? used to return cnt
 }
 
 template<int Degree>

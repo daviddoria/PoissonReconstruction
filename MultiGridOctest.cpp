@@ -26,9 +26,9 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 DAMAGE.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include <float.h>
 #include "Time.h"
 #include "MarchingCubes.h"
@@ -43,34 +43,43 @@ DAMAGE.
 #define SCALE 1.25
 
 #include <stdarg.h>
+
 char* outputFile=NULL;
 int echoStdout=0;
-void DumpOutput(const char* format,...){
-	if(outputFile){
-		FILE* fp=fopen(outputFile,"a");
-		va_list args;
-		va_start(args,format);
-		vfprintf(fp,format,args);
-		fclose(fp);
-		va_end(args);
-	}
-	if(echoStdout){
-		va_list args;
-		va_start(args,format);
-		vprintf(format,args);
-		va_end(args);
-	}
+
+void DumpOutput(const char* format,...)
+{
+  if(outputFile)
+    {
+      FILE* fp=fopen(outputFile,"a");
+      va_list args;
+      va_start(args,format);
+      vfprintf(fp,format,args);
+      fclose(fp);
+      va_end(args);
+    }
+	if(echoStdout)
+    {
+    va_list args;
+    va_start(args,format);
+    vprintf(format,args);
+    va_end(args);
+    }
 }
-void DumpOutput2(char* str,const char* format,...){
-	if(outputFile){
-		FILE* fp=fopen(outputFile,"a");
-		va_list args;
-		va_start(args,format);
-		vfprintf(fp,format,args);
-		fclose(fp);
-		va_end(args);
-	}
-	if(echoStdout){
+
+void DumpOutput2(char* str,const char* format,...)
+{
+	if(outputFile)
+      {
+      FILE* fp=fopen(outputFile,"a");
+      va_list args;
+      va_start(args,format);
+      vfprintf(fp,format,args);
+      fclose(fp);
+      va_end(args);
+      }
+	if(echoStdout)
+    {
 		va_list args;
 		va_start(args,format);
 		vprintf(format,args);
@@ -84,7 +93,6 @@ void DumpOutput2(char* str,const char* format,...){
 }
 
 #include "MultiGridOctreeData.h"
-
 
 void ShowUsage(char* ex)
 {
@@ -120,6 +128,7 @@ void ShowUsage(char* ex)
 
 	printf("\t[--verbose]\n");
 }
+
 template<int Degree>
 int Execute(int argc,char* argv[])
 {
@@ -146,7 +155,10 @@ int Execute(int argc,char* argv[])
 	char **comments;
 
 	comments=new char*[paramNum+7];
-	for(i=0;i<paramNum+7;i++){comments[i]=new char[1024];}
+	for(i=0;i<paramNum+7;i++)
+      {
+      comments[i]=new char[1024];
+      }
 
 	const char* Rev = "Rev: V2 ";
 	const char* Date = "Date: 2006-11-09 (Thur, 09 Nov 2006) ";
@@ -156,6 +168,7 @@ int Execute(int argc,char* argv[])
 	if(Verbose.set){echoStdout=1;}
 
 	DumpOutput2(comments[commentNum++],"Running Multi-Grid Octree Surface Reconstructor (degree %d). Version 2\n", Degree);
+    
 	if(In.set)				{DumpOutput2(comments[commentNum++],"\t--in %s\n",In.value);}
 	if(Out.set)				{DumpOutput2(comments[commentNum++],"\t--out %s\n",Out.value);}
 	if(Binary.set)			{DumpOutput2(comments[commentNum++],"\t--binary\n");}
@@ -176,53 +189,60 @@ int Execute(int argc,char* argv[])
 	Real scale=1.0;
 	Real isoValue=0;
 	Octree<Degree> tree;
-	PPolynomial<Degree> ReconstructionFunction=PPolynomial<Degree>::GaussianApproximation();
+	PPolynomial<Degree> ReconstructionFunction = PPolynomial<Degree>::GaussianApproximation();
 
 	center.coords[0]=center.coords[1]=center.coords[2]=0;
 	if(!In.set || !Out.set)
-	{
-		ShowUsage(argv[0]);
-		return 0;
-	}
+	 {
+     ShowUsage(argv[0]);
+     return 0;
+	 }
 	
 	TreeOctNode::SetAllocator(MEMORY_ALLOCATOR_BLOCK_SIZE);
 
 	t=Time();
 	int kernelDepth=Depth.value-2;
-	if(KernelDepth.set){kernelDepth=KernelDepth.value;}
+	if(KernelDepth.set)
+      {
+      kernelDepth=KernelDepth.value;
+      }
 
 	tree.setFunctionData(ReconstructionFunction,Depth.value,0,Real(1.0)/(1<<Depth.value));
 	DumpOutput("Function Data Set In: %lg\n",Time()-t);
 	DumpOutput("Memory Usage: %.3f MB\n",float(MemoryInfo::Usage())/(1<<20));
-	if(kernelDepth>Depth.value){
-		fprintf(stderr,"KernelDepth can't be greater than Depth: %d <= %d\n",kernelDepth,Depth.value);
-		return EXIT_FAILURE;
-	}
+	if(kernelDepth>Depth.value)
+      {
+      fprintf(stderr,"KernelDepth can't be greater than Depth: %d <= %d\n",kernelDepth,Depth.value);
+      return EXIT_FAILURE;
+      }
 
 
 	t=Time();
 #if 1
 	tree.setTree(In.value,Depth.value,Binary.set,kernelDepth,Real(SamplesPerNode.value),Scale.value,center,scale,!NoResetSamples.set,Confidence.set);
 #else
-if(Confidence.set){
-	tree.setTree(In.value,Depth.value,Binary.set,kernelDepth,Real(SamplesPerNode.value),Scale.value,center,scale,!NoResetSamples.set,0,1);
-}
-else{
-	tree.setTree(In.value,Depth.value,Binary.set,kernelDepth,Real(SamplesPerNode.value),Scale.value,center,scale,!NoResetSamples.set,0,0);
-}
+if(Confidence.set)
+  {
+  tree.setTree(In.value,Depth.value,Binary.set,kernelDepth,Real(SamplesPerNode.value),Scale.value,center,scale,!NoResetSamples.set,0,1);
+  }
+else
+  {
+  tree.setTree(In.value,Depth.value,Binary.set,kernelDepth,Real(SamplesPerNode.value),Scale.value,center,scale,!NoResetSamples.set,0,0);
+  }
 #endif
 	DumpOutput2(comments[commentNum++],"#             Tree set in: %9.1f (s), %9.1f (MB)\n",Time()-t,tree.maxMemoryUsage);
 	DumpOutput("Leaves/Nodes: %d/%d\n",tree.tree.leaves(),tree.tree.nodes());
 	DumpOutput("   Tree Size: %.3f MB\n",float(sizeof(TreeOctNode)*tree.tree.nodes())/(1<<20));
 	DumpOutput("Memory Usage: %.3f MB\n",float(MemoryInfo::Usage())/(1<<20));
 
-	if(!NoClipTree.set){
-		t=Time();
-		tree.ClipTree();
-		DumpOutput("Tree Clipped In: %lg\n",Time()-t);
-		DumpOutput("Leaves/Nodes: %d/%d\n",tree.tree.leaves(),tree.tree.nodes());
-		DumpOutput("   Tree Size: %.3f MB\n",float(sizeof(TreeOctNode)*tree.tree.nodes())/(1<<20));
-	}
+	if(!NoClipTree.set)
+      {
+      t=Time();
+      tree.ClipTree();
+      DumpOutput("Tree Clipped In: %lg\n",Time()-t);
+      DumpOutput("Leaves/Nodes: %d/%d\n",tree.tree.leaves(),tree.tree.nodes());
+      DumpOutput("   Tree Size: %.3f MB\n",float(sizeof(TreeOctNode)*tree.tree.nodes())/(1<<20));
+	  }
 
 	t=Time();
 	tree.finalize1(Refine.value);
@@ -257,8 +277,14 @@ else{
 	DumpOutput("Memory Usage: %.3f MB\n",float(tree.MemoryUsage()));
 
 	t=Time();
-	if(IsoDivide.value){tree.GetMCIsoTriangles(isoValue,IsoDivide.value,&mesh);}
-	else{tree.GetMCIsoTriangles(isoValue,&mesh);}
+	if(IsoDivide.value)
+      {
+      tree.GetMCIsoTriangles(isoValue,IsoDivide.value,&mesh);
+      }
+	else
+      {
+      tree.GetMCIsoTriangles(isoValue,&mesh);
+      }
 	DumpOutput2(comments[commentNum++],"#        Got Triangles in: %9.1f (s), %9.1f (MB)\n",Time()-t,tree.maxMemoryUsage);
 	DumpOutput2(comments[commentNum++],"#              Total Time: %9.1f (s)\n",Time()-tt);
 	PlyWriteTriangles(Out.value,&mesh,PLY_BINARY_NATIVE,center,scale,comments,commentNum);
@@ -268,28 +294,7 @@ else{
 
 int main(int argc,char* argv[])
 {
-	int degree=2;
-
-	switch(degree)
-	{
-		case 1:
-			Execute<1>(argc,argv);
-			break;
-		case 2:
-			Execute<2>(argc,argv);
-			break;
-		case 3:
-			Execute<3>(argc,argv);
-			break;
-		case 4:
-			Execute<4>(argc,argv);
-			break;
-		case 5:
-			Execute<5>(argc,argv);
-			break;
-		default:
-			fprintf(stderr,"Degree %d not supported\n",degree);
-			return EXIT_FAILURE;
-	}
-	return EXIT_SUCCESS;
+  Execute<2>(argc,argv);
+  
+  return EXIT_SUCCESS;
 }
