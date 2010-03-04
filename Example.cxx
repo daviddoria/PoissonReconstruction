@@ -6,9 +6,19 @@
 
 int main(int argc, char *argv[])
 {
-  //vtkstd::string inputFileName = argv[1];
-  vtkstd::string inputFileName = "horsePoints.vtp";
-  vtkstd::string outputFileName = "horse.vtp";
+  if( argc < 4 )
+    {
+    std::cout <<"PoissonReconstruction takes 3 arguments: " <<std::endl;
+    std::cout <<"1-Input file (*.vtp)" <<std::endl;
+    std::cout <<"2-Depth" <<std::endl;
+    std::cout <<"3-Output file (*.vtp)" <<std::endl;
+    return EXIT_FAILURE;
+    }
+
+  std::cout <<argv[1] <<" " <<argv[2] <<" " <<argv[3] <<std::endl;
+  vtkstd::string inputFileName = argv[1];//"horsePoints.vtp";
+  vtkstd::string outputFileName = argv[3];//"horse.vtp";
+  int depth = atoi( argv[2] );
   
   vtkSmartPointer<vtkXMLPolyDataReader> reader =
       vtkSmartPointer<vtkXMLPolyDataReader>::New();
@@ -17,7 +27,7 @@ int main(int argc, char *argv[])
   
   vtkSmartPointer<vtkPoissonReconstruction> poissonFilter = 
       vtkSmartPointer<vtkPoissonReconstruction>::New();
-  poissonFilter->SetDepth(10);
+  poissonFilter->SetDepth( depth );
   poissonFilter->SetInputConnection(reader->GetOutputPort());
   poissonFilter->Update();
   
@@ -29,3 +39,4 @@ int main(int argc, char *argv[])
   
   return EXIT_SUCCESS;
 }
+

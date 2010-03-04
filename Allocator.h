@@ -124,9 +124,9 @@ public:
 
 	/** This method initiallizes the constructor and the blockSize variable specifies the
 	  * the number of objects that should be pre-allocated at a time. */
-	void set(const int& blockSize){
+	void set(const int& iBlockSize){
 		reset();
-		this->blockSize=blockSize;
+		this->blockSize=iBlockSize;
 		index=-1;
 		remains=0;
 	}
