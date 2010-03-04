@@ -5,5 +5,5 @@ PROJECT(PoissonReconstruction)
 FIND_PACKAGE(VTK REQUIRED)
 INCLUDE(${VTK_USE_FILE})
 
-ADD_EXECUTABLE(PoissonReconstruction CmdLineParser.cpp Factor.cpp Geometry.cpp MarchingCubes.cpp ply.cpp plyfile.cpp Time.cpp MultiGridOctest.cpp)
+ADD_EXECUTABLE(PoissonReconstruction Example.cxx vtkPoissonReconstruction.cxx CmdLineParser.cpp Factor.cpp Geometry.cpp MarchingCubes.cpp ply.cpp plyfile.cpp Time.cpp MultiGridOctest.cpp MultiGridOctreeData.cpp)
 TARGET_LINK_LIBRARIES(PoissonReconstruction vtkHybrid)

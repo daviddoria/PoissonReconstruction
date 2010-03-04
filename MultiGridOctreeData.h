@@ -30,6 +30,12 @@ DAMAGE.
 #define MULTI_GRID_OCTREE_DATA_INCLUDED
 
 #include "Hash.h"
+#include "Octree.h"
+#include "SparseMatrix.h"
+#include "FunctionData.h"
+#include "Time.h"
+#include "time.h"
+#include "MemoryUsage.h"
 
 typedef float Real;
 typedef float FunctionDataReal;
@@ -55,6 +61,7 @@ public:
 	static long long CenterIndex(const TreeOctNode* node,const int& maxDepth,int index[DIMENSION]);
 	static long long CenterIndex(const TreeOctNode* node,const int& maxDepth);
 };
+
 class SortedTreeNodes{
 public:
 	TreeOctNode** treeNodes;
@@ -77,8 +84,8 @@ public:
 	};
 	Real value;
 
-	TreeNodeData(void);
-	~TreeNodeData(void);
+	TreeNodeData();
+	~TreeNodeData();
 };
 
 template<int Degree>

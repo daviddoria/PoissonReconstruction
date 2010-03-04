@@ -27,7 +27,7 @@ DAMAGE.
 */
 
 #include <float.h>
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 
 ////////////////

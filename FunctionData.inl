@@ -41,14 +41,16 @@ template<int Degree,class Real>
 const int FunctionData<Degree,Real>::D_VALUE_FLAG=2;
 
 template<int Degree,class Real>
-FunctionData<Degree,Real>::FunctionData(void){
-	dotTable=dDotTable=d2DotTable=NULL;
-	valueTables=dValueTables=NULL;
-	res=0;
+inline FunctionData<Degree,Real>::FunctionData(void)
+{
+  dotTable=dDotTable=d2DotTable=NULL;
+  valueTables=dValueTables=NULL;
+  res=0;
 }
 
 template<int Degree,class Real>
-FunctionData<Degree,Real>::~FunctionData(void){
+inline FunctionData<Degree,Real>::~FunctionData(void)
+{
 	if(res){
 		if(  dotTable){delete[]   dotTable;}
 		if( dDotTable){delete[]  dDotTable;}
@@ -62,7 +64,8 @@ FunctionData<Degree,Real>::~FunctionData(void){
 }
 
 template<int Degree,class Real>
-void FunctionData<Degree,Real>::set(const int& maxDepth,const PPolynomial<Degree>& F,const int& normalize,const int& useDotRatios){
+inline void FunctionData<Degree,Real>::set(const int& maxDepth,const PPolynomial<Degree>& F,const int& normalize,const int& useDotRatios)
+{
 	this->normalize=normalize;
 	this->useDotRatios=useDotRatios;
 
@@ -100,8 +103,10 @@ void FunctionData<Degree,Real>::set(const int& maxDepth,const PPolynomial<Degree
 		}
 	}
 }
+
 template<int Degree,class Real>
-void FunctionData<Degree,Real>::setDotTables(const int& flags){
+inline void FunctionData<Degree,Real>::setDotTables(const int& flags)
+{
 	clearDotTables(flags);
 	int size;
 	size=(res*res+res)>>1;
@@ -155,8 +160,10 @@ void FunctionData<Degree,Real>::setDotTables(const int& flags){
 		}
 	}
 }
+
 template<int Degree,class Real>
-void FunctionData<Degree,Real>::clearDotTables(const int& flags){
+inline void FunctionData<Degree,Real>::clearDotTables(const int& flags)
+{
 	if((flags & DOT_FLAG) && dotTable){
 		delete[] dotTable;
 		dotTable=NULL;
@@ -170,8 +177,10 @@ void FunctionData<Degree,Real>::clearDotTables(const int& flags){
 		d2DotTable=NULL;
 	}
 }
+
 template<int Degree,class Real>
-void FunctionData<Degree,Real>::setValueTables(const int& flags,const double& smooth){
+inline void FunctionData<Degree,Real>::setValueTables(const int& flags,const double& smooth)
+{
 	clearValueTables();
 	if(flags &   VALUE_FLAG){ valueTables=new Real[res*res2];}
 	if(flags & D_VALUE_FLAG){dValueTables=new Real[res*res2];}
@@ -193,8 +202,10 @@ void FunctionData<Degree,Real>::setValueTables(const int& flags,const double& sm
 		}
 	}
 }
+
 template<int Degree,class Real>
-void FunctionData<Degree,Real>::setValueTables(const int& flags,const double& valueSmooth,const double& normalSmooth){
+inline void FunctionData<Degree,Real>::setValueTables(const int& flags,const double& valueSmooth,const double& normalSmooth)
+{
 	clearValueTables();
 	if(flags &   VALUE_FLAG){ valueTables=new Real[res*res2];}
 	if(flags & D_VALUE_FLAG){dValueTables=new Real[res*res2];}
@@ -216,13 +227,16 @@ void FunctionData<Degree,Real>::setValueTables(const int& flags,const double& va
 
 
 template<int Degree,class Real>
-void FunctionData<Degree,Real>::clearValueTables(void){
+inline void FunctionData<Degree,Real>::clearValueTables(void)
+{
 	if( valueTables){delete[]  valueTables;}
 	if(dValueTables){delete[] dValueTables;}
 	valueTables=dValueTables=NULL;
 }
+
 template<int Degree,class Real>
-Real FunctionData<Degree,Real>::dotProduct(const double& center1,const double& width1,const double& center2,const double& width2) const{
+inline Real FunctionData<Degree,Real>::dotProduct(const double& center1,const double& width1,const double& center2,const double& width2) const
+{
 	double r=fabs(baseFunction.polys[0].start);
 	switch(normalize){
 		case 2:
@@ -233,8 +247,10 @@ Real FunctionData<Degree,Real>::dotProduct(const double& center1,const double& w
 			return Real((baseFunction*baseFunction.scale(width2/width1).shift((center2-center1)/width1)).integral(-2*r,2*r)*width1);
 	}
 }
+
 template<int Degree,class Real>
-Real FunctionData<Degree,Real>::dDotProduct(const double& center1,const double& width1,const double& center2,const double& width2) const{
+inline Real FunctionData<Degree,Real>::dDotProduct(const double& center1,const double& width1,const double& center2,const double& width2) const
+{
 	double r=fabs(baseFunction.polys[0].start);
 	switch(normalize){
 		case 2:
@@ -245,8 +261,10 @@ Real FunctionData<Degree,Real>::dDotProduct(const double& center1,const double& 
 			return Real((dBaseFunction*baseFunction.scale(width2/width1).shift((center2-center1)/width1)).integral(-2*r,2*r));
 	}
 }
+
 template<int Degree,class Real>
-Real FunctionData<Degree,Real>::d2DotProduct(const double& center1,const double& width1,const double& center2,const double& width2) const{
+inline Real FunctionData<Degree,Real>::d2DotProduct(const double& center1,const double& width1,const double& center2,const double& width2) const
+{
 	double r=fabs(baseFunction.polys[0].start);
 	switch(normalize){
 		case 2:
@@ -257,13 +275,17 @@ Real FunctionData<Degree,Real>::d2DotProduct(const double& center1,const double&
 			return Real((dBaseFunction*dBaseFunction.scale(width2/width1).shift((center2-center1)/width1)).integral(-2*r,2*r)/width2);
 	}
 }
+
 template<int Degree,class Real>
 inline int FunctionData<Degree,Real>::SymmetricIndex(const int& i1,const int& i2){
+  
 	if(i1>i2)	{return ((i1*i1+i1)>>1)+i2;}
 	else		{return ((i2*i2+i2)>>1)+i1;}
 }
+
 template<int Degree,class Real>
-inline int FunctionData<Degree,Real>::SymmetricIndex(const int& i1,const int& i2,int& index){
+inline int FunctionData<Degree,Real>::SymmetricIndex(const int& i1,const int& i2,int& index)
+{
 	if(i1<i2){
 		index=((i2*i2+i2)>>1)+i1;
 		return 1;

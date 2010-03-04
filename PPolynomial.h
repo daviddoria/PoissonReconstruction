@@ -32,7 +32,8 @@ DAMAGE.
 #include "Polynomial.h"
 
 template<int Degree>
-class StartingPolynomial{
+class StartingPolynomial
+{
 public:
 	Polynomial<Degree> p;
 	double start;
