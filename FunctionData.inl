@@ -64,10 +64,10 @@ inline FunctionData<Degree,Real>::~FunctionData(void)
 }
 
 template<int Degree,class Real>
-inline void FunctionData<Degree,Real>::set(const int& maxDepth,const PPolynomial<Degree>& F,const int& normalize,const int& useDotRatios)
+inline void FunctionData<Degree,Real>::set(const int& maxDepth,const PPolynomial<Degree>& F,const int& iNormalize,const int& iUseDotRatios)
 {
-	this->normalize=normalize;
-	this->useDotRatios=useDotRatios;
+	this->normalize=iNormalize;
+	this->useDotRatios=iUseDotRatios;
 
 	depth=maxDepth;
 	res=BinaryNode<double>::CumulativeCenterCount(depth);

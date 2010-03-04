@@ -144,7 +144,7 @@ public:
 			return NULL;
 		}
 		if(remains<elements){
-			if(index==memory.size()-1){
+			if(index==static_cast<int>(memory.size()-1)){
 				mem=new T[blockSize];
 				if(!mem){fprintf(stderr,"Failed to allocate memory\n");exit(0);}
 				memory.push_back(mem);

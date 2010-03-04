@@ -60,7 +60,7 @@ SparseMatrix<T>::SparseMatrix()
 }
 
 template<class T>
-SparseMatrix<T>::SparseMatrix( int rows ){Resize(rows);}
+SparseMatrix<T>::SparseMatrix( int iRows ){Resize(iRows);}
 
 template<class T>
 SparseMatrix<T>::SparseMatrix( const SparseMatrix& M )
@@ -318,7 +318,7 @@ SparseNMatrix<T,Dim>::SparseNMatrix()
 }
 
 template<class T,int Dim>
-SparseNMatrix<T,Dim>::SparseNMatrix( int rows ){Resize(rows);}
+SparseNMatrix<T,Dim>::SparseNMatrix( int iRows ){Resize(iRows);}
 
 template<class T,int Dim>
 SparseNMatrix<T,Dim>::SparseNMatrix( const SparseNMatrix& M )

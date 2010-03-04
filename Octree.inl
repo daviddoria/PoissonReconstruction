@@ -76,9 +76,9 @@ inline OctNode<NodeData,Real>::~OctNode(void)
 }
 
 template <class NodeData,class Real>
-inline void OctNode<NodeData,Real>::setFullDepth(const int& maxDepth)
+inline void OctNode<NodeData,Real>::setFullDepth(const int& iMaxDepth)
 {
-	if(maxDepth)
+	if(iMaxDepth)
     {
 		if(!children)
         {
@@ -86,7 +86,7 @@ inline void OctNode<NodeData,Real>::setFullDepth(const int& maxDepth)
         }
 		for(int i=0;i<8;i++)
         {
-          children[i].setFullDepth(maxDepth-1);
+          children[i].setFullDepth(iMaxDepth-1);
         }
 	}
 }
@@ -107,8 +107,8 @@ inline int OctNode<NodeData,Real>::initChildren(void)
 		exit(0);
 		return 0;
 	}
-	int d,off[3];
-	depthAndOffset(d,off);
+	int td,toff[3];
+	depthAndOffset(td,toff);
 	for(i=0;i<2;i++){
 		for(j=0;j<2;j++){
 			for(k=0;k<2;k++){
@@ -116,10 +116,10 @@ inline int OctNode<NodeData,Real>::initChildren(void)
 				children[idx].parent=this;
 				children[idx].children=NULL;
 				int off2[3];
-				off2[0]=(off[0]<<1)+i;
-				off2[1]=(off[1]<<1)+j;
-				off2[2]=(off[2]<<1)+k;
-				Index(d+1,off2,children[idx].d,children[idx].off);
+				off2[0]=(toff[0]<<1)+i;
+				off2[1]=(toff[1]<<1)+j;
+				off2[2]=(toff[2]<<1)+k;
+				Index(td+1,off2,children[idx].d,children[idx].off);
 			}
 		}
 	}
@@ -136,12 +136,12 @@ inline void OctNode<NodeData,Real>::Index(const int& depth,const int offset[3],s
 }
 
 template<class NodeData,class Real>
-inline void OctNode<NodeData,Real>::depthAndOffset(int& depth,int offset[3]) const 
+inline void OctNode<NodeData,Real>::depthAndOffset(int& oDepth,int offset[3]) const
 {
-	depth=int(d);
-	offset[0]=(int(off[0])+1)&(~(1<<depth));
-	offset[1]=(int(off[1])+1)&(~(1<<depth));
-	offset[2]=(int(off[2])+1)&(~(1<<depth));
+	oDepth=int(d);
+	offset[0]=(int(off[0])+1)&(~(1<<oDepth));
+	offset[1]=(int(off[1])+1)&(~(1<<oDepth));
+	offset[2]=(int(off[2])+1)&(~(1<<oDepth));
 }
 
 template<class NodeData,class Real>
@@ -157,14 +157,14 @@ inline void OctNode<NodeData,Real>::DepthAndOffset(const long long& index,int& d
 template<class NodeData,class Real>
 inline int OctNode<NodeData,Real>::Depth(const long long& index){return int(index&DepthMask);}
 template <class NodeData,class Real>
-void OctNode<NodeData,Real>::centerAndWidth(Point3D<Real>& center,Real& width) const{
-	int depth,offset[3];
-	depth=int(d);
-	offset[0]=(int(off[0])+1)&(~(1<<depth));
-	offset[1]=(int(off[1])+1)&(~(1<<depth));
-	offset[2]=(int(off[2])+1)&(~(1<<depth));
-	width=Real(1.0/(1<<depth));
-	for(int dim=0;dim<DIMENSION;dim++){center.coords[dim]=Real(0.5+offset[dim])*width;}
+void OctNode<NodeData,Real>::centerAndWidth(Point3D<Real>& center,Real& oWidth) const{
+	int tdepth,offset[3];
+	tdepth=int(d);
+	offset[0]=(int(off[0])+1)&(~(1<<tdepth));
+	offset[1]=(int(off[1])+1)&(~(1<<tdepth));
+	offset[2]=(int(off[2])+1)&(~(1<<tdepth));
+	oWidth=Real(1.0/(1<<tdepth));
+	for(int dim=0;dim<DIMENSION;dim++){center.coords[dim]=Real(0.5+offset[dim])*oWidth;}
 }
 
 template <class NodeData,class Real>
@@ -187,13 +187,13 @@ inline int OctNode<NodeData,Real>::maxDepth(void) const
     }
 	else
     {
-		int c,d;
+		int c,td;
 		for(int i=0;i<Cube::CORNERS;i++)
         {
-			d=children[i].maxDepth();
-			if(!i || d>c)
+			td=children[i].maxDepth();
+			if(!i || td>c)
               {
-                c=d;
+                c=td;
               }
 		}
 		return c+1;
@@ -223,13 +223,13 @@ inline int OctNode<NodeData,Real>::leaves(void) const
 }
 
 template<class NodeData,class Real>
-inline int OctNode<NodeData,Real>::maxDepthLeaves(const int& maxDepth) const
+inline int OctNode<NodeData,Real>::maxDepthLeaves(const int& iMaxDepth) const
 {
-	if(depth()>maxDepth){return 0;}
+	if(depth()>iMaxDepth){return 0;}
 	if(!children){return 1;}
 	else{
 		int c=0;
-		for(int i=0;i<Cube::CORNERS;i++){c+=children[i].maxDepthLeaves(maxDepth);}
+		for(int i=0;i<Cube::CORNERS;i++){c+=children[i].maxDepthLeaves(iMaxDepth);}
 		return c;
 	}
 }
@@ -305,10 +305,10 @@ template <class NodeData,class Real>
 void OctNode<NodeData,Real>::printRange(void) const
 {
 	Point3D<Real> center;
-	Real width;
-	centerAndWidth(center,width);
+	Real twidth;
+	centerAndWidth(center,twidth);
 	for(int dim=0;dim<DIMENSION;dim++){
-		printf("%[%f,%f]",center.coords[dim]-width/2,center.coords[dim]+width/2);
+		printf("%[%f,%f]",center.coords[dim]-twidth/2,center.coords[dim]+twidth/2);
 		if(dim<DIMENSION-1){printf("x");}
 		else printf("\n");
 	}
@@ -702,7 +702,7 @@ inline int OctNode<NodeData,Real>::ChildOverlap(const int& dx,const int& dy,cons
 template <class NodeData,class Real>
 OctNode<NodeData,Real>* OctNode<NodeData,Real>::getNearestLeaf(const Point3D<Real>& p){
 	Point3D<Real> center;
-	Real width;
+	Real twidth;
 	OctNode<NodeData,Real>* temp;
 	int cIndex;
 	if(!children){return this;}
@@ -712,12 +712,12 @@ OctNode<NodeData,Real>* OctNode<NodeData,Real>::getNearestLeaf(const Point3D<Rea
 		cIndex=CornerIndex(center,p);
 		temp=&temp->children[cIndex];
 		width/=2;
-		if(cIndex&1){center.coords[0]+=width/2;}
-		else		{center.coords[0]-=width/2;}
-		if(cIndex&2){center.coords[1]+=width/2;}
-		else		{center.coords[1]-=width/2;}
-		if(cIndex&4){center.coords[2]+=width/2;}
-		else		{center.coords[2]-=width/2;}
+		if(cIndex&1){center.coords[0]+=twidth/2;}
+		else		{center.coords[0]-=twidth/2;}
+		if(cIndex&2){center.coords[1]+=twidth/2;}
+		else		{center.coords[1]-=twidth/2;}
+		if(cIndex&4){center.coords[2]+=twidth/2;}
+		else		{center.coords[2]-=twidth/2;}
 	}
 	return temp;
 }
@@ -842,14 +842,14 @@ OctNode<NodeData,Real>* OctNode<NodeData,Real>::faceNeighbor(const int& faceInde
 template <class NodeData,class Real>
 const OctNode<NodeData,Real>* OctNode<NodeData,Real>::faceNeighbor(const int& faceIndex) const {return __faceNeighbor(faceIndex>>1,faceIndex&1);}
 template <class NodeData,class Real>
-OctNode<NodeData,Real>* OctNode<NodeData,Real>::__faceNeighbor(const int& dir,const int& off,const int& forceChildren){
+OctNode<NodeData,Real>* OctNode<NodeData,Real>::__faceNeighbor(const int& dir,const int& iOff,const int& forceChildren){
 	if(!parent){return NULL;}
 	int pIndex=int(this-parent->children);
 	pIndex^=(1<<dir);
-	if((pIndex & (1<<dir))==(off<<dir)){return &parent->children[pIndex];}
-//	if(!(((pIndex>>dir)^off)&1)){return &parent->children[pIndex];}
+	if((pIndex & (1<<dir))==(iOff<<dir)){return &parent->children[pIndex];}
+//	if(!(((pIndex>>dir)^iOff)&1)){return &parent->children[pIndex];}
 	else{
-		OctNode* temp=parent->__faceNeighbor(dir,off,forceChildren);
+		OctNode* temp=parent->__faceNeighbor(dir,iOff,forceChildren);
 		if(!temp){return NULL;}
 		if(!temp->children){
 			if(forceChildren){temp->initChildren();}
@@ -859,14 +859,14 @@ OctNode<NodeData,Real>* OctNode<NodeData,Real>::__faceNeighbor(const int& dir,co
 	}
 }
 template <class NodeData,class Real>
-const OctNode<NodeData,Real>* OctNode<NodeData,Real>::__faceNeighbor(const int& dir,const int& off) const {
+const OctNode<NodeData,Real>* OctNode<NodeData,Real>::__faceNeighbor(const int& dir,const int& iOff) const {
 	if(!parent){return NULL;}
 	int pIndex=int(this-parent->children);
 	pIndex^=(1<<dir);
-	if((pIndex & (1<<dir))==(off<<dir)){return &parent->children[pIndex];}
-//	if(!(((pIndex>>dir)^off)&1)){return &parent->children[pIndex];}
+	if((pIndex & (1<<dir))==(iOff<<dir)){return &parent->children[pIndex];}
+//	if(!(((pIndex>>dir)^iOff)&1)){return &parent->children[pIndex];}
 	else{
-		const OctNode* temp=parent->__faceNeighbor(dir,off);
+		const OctNode* temp=parent->__faceNeighbor(dir,iOff);
 		if(!temp || !temp->children){return temp;}
 		else{return &temp->children[pIndex];}
 	}
@@ -1326,13 +1326,13 @@ int OctNode<NodeData,Real>::read(FILE* fp){
 	return 1;
 }
 template<class NodeData,class Real>
-int OctNode<NodeData,Real>::width(const int& maxDepth) const {
-	int d=depth();
-	return 1<<(maxDepth-d); 
+int OctNode<NodeData,Real>::width(const int& iMaxDepth) const {
+	int td=depth();
+	return 1<<(iMaxDepth-td); 
 }
 template<class NodeData,class Real>
-void OctNode<NodeData,Real>::centerIndex(const int& maxDepth,int index[DIMENSION]) const {
-	int d,o[3];
-	depthAndOffset(d,o);
-	for(int i=0;i<DIMENSION;i++){index[i]=BinaryNode<Real>::CornerIndex(maxDepth,d+1,o[i]<<1,1);}
+void OctNode<NodeData,Real>::centerIndex(const int& iMaxDepth,int index[DIMENSION]) const {
+	int td,o[3];
+	depthAndOffset(td,o);
+	for(int i=0;i<DIMENSION;i++){index[i]=BinaryNode<Real>::CornerIndex(iMaxDepth,td+1,o[i]<<1,1);}
 }

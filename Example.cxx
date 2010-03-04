@@ -15,7 +15,6 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  std::cout <<argv[1] <<" " <<argv[2] <<" " <<argv[3] <<std::endl;
   vtkstd::string inputFileName = argv[1];//"horsePoints.vtp";
   vtkstd::string outputFileName = argv[3];//"horse.vtp";
   int depth = atoi( argv[2] );

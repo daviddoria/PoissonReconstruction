@@ -51,7 +51,7 @@ public:
 	PPolynomial<Degree+1>* baseFunctions;
 
 	FunctionData(void);
-	~FunctionData(void);
+	virtual ~FunctionData(void);
 
 	virtual void   setDotTables(const int& flags);
 	virtual void clearDotTables(const int& flags);

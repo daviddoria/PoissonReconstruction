@@ -57,7 +57,8 @@ int vtkPoissonReconstruction::RequestData(vtkInformation *vtkNotUsed(request),
   const int Degree = 2;
   
   double t;
-  double tt=Time();
+  //NOTE: tt is unused (so I commented it)
+//   double tt=Time();
   Point3D<float> center;
   Real scale=1.0;
   Real isoValue=0;
@@ -143,14 +144,14 @@ int vtkPoissonReconstruction::RequestData(vtkInformation *vtkNotUsed(request),
     vtkSmartPointer<vtkPoints> points = 
         vtkSmartPointer<vtkPoints>::New();
     Point3D<float> p;
-	for (unsigned int i = 0; i < int(mesh.inCorePoints.size()); i++)
+	for (unsigned int i = 0; i < static_cast< unsigned int >(mesh.inCorePoints.size()); i++)
       {
 		p = mesh.inCorePoints[i];
 		points->InsertNextPoint(p.coords[0]*scale + center.coords[0],
 		                        p.coords[1]*scale + center.coords[1],
                                 p.coords[2]*scale + center.coords[2]);
 	 }
-	for(unsigned int i = 0; i < mesh.outOfCorePointCount(); i++)
+	for(unsigned int i = 0; i < static_cast< unsigned int >( mesh.outOfCorePointCount() ); i++)
       {
 		mesh.nextOutOfCorePoint(p);
 		points->InsertNextPoint(p.coords[0]*scale + center.coords[0],
@@ -166,7 +167,7 @@ int vtkPoissonReconstruction::RequestData(vtkInformation *vtkNotUsed(request),
 	TriangleIndex tIndex;
 	int inCoreFlag;
 	
-    int nr_faces=mesh.triangleCount();
+  unsigned int nr_faces = mesh.triangleCount();
 	for(unsigned int i = 0; i < nr_faces; i++)
       {
       vtkSmartPointer<vtkTriangle> triangle = 

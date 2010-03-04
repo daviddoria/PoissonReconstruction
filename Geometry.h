@@ -162,7 +162,7 @@ void TriangleCollapse(const Real& edgeRatio,std::vector<TriangleIndex>& triangle
 class CoredMeshData{
 public:
   CoredMeshData() {}
-  ~CoredMeshData() {}
+  virtual ~CoredMeshData() {}
 
 	std::vector<Point3D<float> > inCorePoints;
 	const static int IN_CORE_FLAG[3];

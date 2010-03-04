@@ -33,12 +33,12 @@ DAMAGE.
 ////////////////////////
 template<int Degree>
 template<int Degree2>
-inline StartingPolynomial<Degree+Degree2> StartingPolynomial<Degree>::operator * (const StartingPolynomial<Degree2>& p) const
+inline StartingPolynomial<Degree+Degree2> StartingPolynomial<Degree>::operator * (const StartingPolynomial<Degree2>& iP) const
 {
 	StartingPolynomial<Degree+Degree2> sp;
-	if(start>p.start){sp.start=start;}
-	else{sp.start=p.start;}
-	sp.p=this->p*p.p;
+	if(start>iP.start){sp.start=start;}
+	else{sp.start=iP.start;}
+	sp.p=this->p*iP.p;
 	return sp;
 }
 
@@ -130,15 +130,15 @@ inline int PPolynomial<Degree>::size(void) const
 }
 
 template<int Degree>
-inline void PPolynomial<Degree>::set(const size_t &size)
+inline void PPolynomial<Degree>::set(const size_t &iSize)
 {
 	if(polyCount){free(polys);}
 	polyCount=0;
 	polys=NULL;
-	polyCount=size;
-	if(size){
-		polys=(StartingPolynomial<Degree>*)malloc(sizeof(StartingPolynomial<Degree>)*size);
-		memset(polys,0,sizeof(StartingPolynomial<Degree>)*size);
+	polyCount=iSize;
+	if(iSize){
+		polys=(StartingPolynomial<Degree>*)malloc(sizeof(StartingPolynomial<Degree>)*iSize);
+		memset(polys,0,sizeof(StartingPolynomial<Degree>)*iSize);
 	}
 }
 
@@ -249,7 +249,7 @@ inline PPolynomial<Degree> PPolynomial<Degree>::operator - (const PPolynomial<De
 }
 
 template<int Degree>
-inline PPolynomial<Degree>& PPolynomial<Degree>::addScaled(const PPolynomial<Degree>& p,const double& scale)
+inline PPolynomial<Degree>& PPolynomial<Degree>::addScaled(const PPolynomial<Degree>& p,const double& iScale)
 {
 	int i,j;
 	StartingPolynomial<Degree>* oldPolys=polys;
@@ -260,9 +260,9 @@ inline PPolynomial<Degree>& PPolynomial<Degree>::addScaled(const PPolynomial<Deg
 	i=j=-1;
 	while(cnt<polyCount){
 		if		(j>=int( p.polyCount)-1)				{polys[idx]=oldPolys[++i];}
-		else if	(i>=int(oldPolyCount)-1)				{polys[idx].start= p.polys[++j].start;polys[idx].p=p.polys[j].p*scale;}
+		else if	(i>=int(oldPolyCount)-1)				{polys[idx].start= p.polys[++j].start;polys[idx].p=p.polys[j].p*iScale;}
 		else if	(oldPolys[i+1].start<p.polys[j+1].start){polys[idx]=oldPolys[++i];}
-		else											{polys[idx].start= p.polys[++j].start;polys[idx].p=p.polys[j].p*scale;}
+		else											{polys[idx].start= p.polys[++j].start;polys[idx].p=p.polys[j].p*iScale;}
 		if(idx && polys[idx].start==polys[idx-1].start)	{polys[idx-1].p+=polys[idx].p;}
 		else{idx++;}
 		cnt++;
@@ -418,7 +418,6 @@ inline void PPolynomial<Degree>::printnl(void) const
 	Polynomial<Degree> p;
 
 	if(!polyCount){
-		Polynomial<Degree> p;
 		printf("[-Infinity,Infinity]\n");
 	}
 	else{
