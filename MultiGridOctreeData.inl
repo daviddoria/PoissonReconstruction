@@ -390,7 +390,7 @@ inline int Octree<Degree>::NonLinearUpdateWeightContribution(TreeOctNode* node,c
 }
 
 template<int Degree>
-inline int Octree<Degree>::setTree(vtkSmartPointer<vtkPolyData> data,const int& maxDepth,const int& binary,
+inline int Octree<Degree>::setTree(vtkSmartPointer<vtkPolyData> data,const int& maxDepth,
 							const int& kernelDepth,const Real& samplesPerNode,const Real& scaleFactor,Point3D<Real>& center,Real& scale,
 							const int& resetSamples,const int& useConfidence)
 {
