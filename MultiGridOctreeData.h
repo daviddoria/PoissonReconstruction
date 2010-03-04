@@ -37,6 +37,9 @@ DAMAGE.
 #include "time.h"
 #include "MemoryUsage.h"
 
+#include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
+
 typedef float Real;
 typedef float FunctionDataReal;
 typedef OctNode<class TreeNodeData,Real> TreeOctNode;
@@ -246,7 +249,7 @@ public:
 	void setFunctionData(const PPolynomial<Degree>& ReconstructionFunction,const int& maxDepth,const int& normalize,const Real& normalSmooth=-1);
 	void finalize1(const int& refineNeighbors=-1);
 	void finalize2(const int& refineNeighbors=-1);
-	int setTree(char* fileName,const int& maxDepth,const int& binary,const int& kernelDepth,const Real& samplesPerNode,
+	int setTree(vtkSmartPointer<vtkPolyData> data,const int& maxDepth,const int& binary,const int& kernelDepth,const Real& samplesPerNode,
 		const Real& scaleFactor,Point3D<Real>& center,Real& scale,const int& resetSampleDepths,const int& useConfidence);
 
 	void SetLaplacianWeights(void);

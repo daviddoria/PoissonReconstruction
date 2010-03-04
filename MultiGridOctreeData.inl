@@ -390,16 +390,10 @@ inline int Octree<Degree>::NonLinearUpdateWeightContribution(TreeOctNode* node,c
 }
 
 template<int Degree>
-inline int Octree<Degree>::setTree(char* fileName,const int& maxDepth,const int& binary,
+inline int Octree<Degree>::setTree(vtkSmartPointer<vtkPolyData> data,const int& maxDepth,const int& binary,
 							const int& kernelDepth,const Real& samplesPerNode,const Real& scaleFactor,Point3D<Real>& center,Real& scale,
 							const int& resetSamples,const int& useConfidence)
 {
-  vtkSmartPointer<vtkXMLPolyDataReader> reader = 
-      vtkSmartPointer<vtkXMLPolyDataReader>::New();
-  reader->SetFileName(fileName);
-  reader->Update();
-  
-  vtkSmartPointer<vtkPolyData> data = reader->GetOutput();
   
    vtkSmartPointer<vtkFloatArray> dataNormals = 
       vtkFloatArray::SafeDownCast(data->GetPointData()->GetNormals());

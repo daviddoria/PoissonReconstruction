@@ -34,10 +34,7 @@ DAMAGE.
 #include "MarchingCubes.h"
 #include "Octree.h"
 #include "SparseMatrix.h"
-#include "CmdLineParser.h"
 #include "FunctionData.h"
-//#include "PPolynomial.h"
-#include "ply.h"
 #include "MemoryUsage.h"
 #include "MultiGridOctest.h"
 
