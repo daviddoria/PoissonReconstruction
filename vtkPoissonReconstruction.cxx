@@ -74,7 +74,8 @@ int vtkPoissonReconstruction::RequestData(vtkInformation *vtkNotUsed(request),
   
   tree.setFunctionData(ReconstructionFunction,this->Depth,0,Real(1.0)/(1<<this->Depth));
   DumpOutput("Function Data Set In: %lg\n",Time()-t);
-  DumpOutput("Memory Usage: %.3f MB\n",float(MemoryInfo::Usage())/(1<<20));
+  size_t memoryusage = MemoryInfo::Usage();
+  DumpOutput("Memory Usage: %.3f MB\n",float(memoryusage)/(1<<20));
   if(this->KernelDepth > this->Depth)
     {
     fprintf(stderr,"KernelDepth can't be greater than Depth: %d <= %d\n",this->KernelDepth,this->Depth);

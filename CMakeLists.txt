@@ -5,7 +5,7 @@ PROJECT(PoissonReconstruction)
 FIND_PACKAGE(VTK REQUIRED)
 INCLUDE(${VTK_USE_FILE})
 
-ADD_EXECUTABLE(PoissonReconstruction Example.cxx vtkPoissonReconstruction.cxx Factor.cpp Geometry.cpp MarchingCubes.cpp Time.cpp MultiGridOctest.cpp MultiGridOctreeData.cpp)
+ADD_EXECUTABLE(PoissonReconstruction Example.cxx vtkPoissonReconstruction.cxx Factor.cpp Geometry.cpp MarchingCubes.cpp Time.cpp MultiGridOctest.cpp MultiGridOctreeData.cpp MemoryUsage.h )
 TARGET_LINK_LIBRARIES(PoissonReconstruction vtkHybrid)
 
 ADD_TEST( PoissonReconstructionTest 

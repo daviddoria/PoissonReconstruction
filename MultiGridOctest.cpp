@@ -35,8 +35,8 @@ DAMAGE.
 #include "Octree.h"
 #include "SparseMatrix.h"
 #include "FunctionData.h"
-#include "MemoryUsage.h"
 #include "MultiGridOctest.h"
+#include "MultiGridOctreeData.h"
 
 #define SCALE 1.25
 
@@ -90,7 +90,6 @@ void DumpOutput2(char* str,const char* format,...)
 	if(str[strlen(str)-1]=='\n'){str[strlen(str)-1]=0;}
 }
 
-#include "MultiGridOctreeData.h"
 
 void ShowUsage(char* ex)
 {
@@ -126,3 +125,4 @@ void ShowUsage(char* ex)
 
 	printf("\t[--verbose]\n");
 }
+

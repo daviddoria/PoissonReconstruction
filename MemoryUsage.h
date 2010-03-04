@@ -4,7 +4,7 @@
 #ifdef WIN32
   #include "MemoryUsageWin32.h"
 #else
-  #ifdef __APPLE 
+  #ifdef __APPLE__
     #include "MemoryUsageApple.h"
   #else 
     #include "MemoryUsageUnix.h"
