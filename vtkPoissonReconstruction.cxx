@@ -20,6 +20,7 @@ vtkPoissonReconstruction::vtkPoissonReconstruction()
 {
   
   this->Depth = 8;
+  this->KernelDepth = 6;
   
   this->SolverDivide = 8;
   this->IsoDivide = 8;
@@ -27,6 +28,14 @@ vtkPoissonReconstruction::vtkPoissonReconstruction()
   
   this->SamplesPerNode = 1.0;
   this->Scale = 1.25;
+  
+  this->Verbose = 0;
+  this->Confidence = 0;
+  
+  this->NoResetSamples = 0;
+  this->NoClipTree = 0;
+  this->Refine = 0;
+  
 }
 
 int vtkPoissonReconstruction::RequestData(vtkInformation *vtkNotUsed(request),
