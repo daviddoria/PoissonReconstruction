@@ -29,6 +29,7 @@ DAMAGE.
 #ifndef FACTOR_INCLUDED
 #define FACTOR_INCLUDED
 
+//BTX
 #define PI 3.1415926535897932384
 #define SQRT_3 1.7320508075688772935
 
@@ -47,4 +48,7 @@ int Factor(double a4,double a3,double a2,double a1,double a0,double roots[4][2],
 
 int Solve(const double* eqns,const double* values,double* solutions,const int& dim);
 
+//ETX
+
 #endif // FACTOR_INCLUDED
+

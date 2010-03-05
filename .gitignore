@@ -3,3 +3,10 @@
 Doxyfile
 BUILD/*
 bin/*
+*.aux
+*.toc
+*.bbl
+*.blg
+*.brf
+*.log
+*.out
