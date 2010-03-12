@@ -30,7 +30,6 @@ DAMAGE.
 #include <cstdlib>
 #include <cmath>
 #include <float.h>
-#include "Time.h"
 #include "MarchingCubes.h"
 #include "Octree.h"
 #include "SparseMatrix.h"

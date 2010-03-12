@@ -33,9 +33,7 @@ DAMAGE.
 #include "Octree.h"
 #include "SparseMatrix.h"
 #include "FunctionData.h"
-#include "Time.h"
 #include "time.h"
-#include "MemoryUsage.h"
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
@@ -238,8 +236,8 @@ class Octree{
 	Real getCornerValue(const TreeOctNode* node,const int& corner);
 	void getCornerValueAndNormal(const TreeOctNode* node,const int& corner,Real& value,Point3D<Real>& normal);
 public:
-	static double maxMemoryUsage;
-	static double MemoryUsage(void);
+//	static double maxMemoryUsage;
+	//static double MemoryUsage(void);
 	std::vector< Point3D<Real> >* normals;
 	Real postNormalSmooth;
 	TreeOctNode tree;
@@ -249,8 +247,8 @@ public:
 	void setFunctionData(const PPolynomial<Degree>& ReconstructionFunction,const int& maxDepth,const int& normalize,const Real& normalSmooth=-1);
 	void finalize1(const int& refineNeighbors=-1);
 	void finalize2(const int& refineNeighbors=-1);
-	int setTree(vtkSmartPointer<vtkPolyData> data,const int& maxDepth,const int& kernelDepth,const Real& samplesPerNode,
-		const Real& scaleFactor,Point3D<Real>& center,Real& scale,const int& resetSampleDepths,const int& useConfidence);
+	int setTree(vtkSmartPointer<vtkPolyData> data, const int& maxDepth, const int& kernelDepth, const Real& samplesPerNode,
+		const Real& scaleFactor, Point3D<Real>& center, Real& scale, const int& resetSampleDepths, const int& useConfidence);
 
 	void SetLaplacianWeights(void);
 	void ClipTree(void);

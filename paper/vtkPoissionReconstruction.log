@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2009.6.10)  5 MAR 2010 10:41
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2009.6.10)  12 MAR 2010 13:01
 entering extended mode
  %&-line parsing enabled.
 **vtkPoissionReconstruction.tex
@@ -437,11 +437,7 @@ Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
-Non-PDF special ignored!
 Non-PDF special ignored!{/usr/share/texmf/fonts/map/pdftex/updmap/pdftex.map}
-Non-PDF special ignored!
-Non-PDF special ignored!
-Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -542,23 +538,21 @@ Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!]
+<Images/HorsePoints.png, id=15, 1067.99pt x 778.91pt>
+File: Images/HorsePoints.png Graphic file (type png)
 
-LaTeX Warning: Reference `fig:SpherePoints' on page 3 undefined on input line 1
-69.
+<use Images/HorsePoints.png>
+<Images/HorseSurface.png, id=16, 1067.99pt x 778.91pt>
+File: Images/HorseSurface.png Graphic file (type png)
 
-
-LaTeX Warning: Reference `fig:SignedDistances' on page 3 undefined on input lin
-e 169.
-
-
-LaTeX Warning: Reference `fig:SphereSurface' on page 3 undefined on input line 
-169.
-
-
+<use Images/HorseSurface.png>
 Overfull \vbox (1.59999pt too high) has occurred while \output is active []
 
 
 [3
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -606,11 +600,21 @@ Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
-Non-PDF special ignored!]
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored! <./Images/HorsePoints.png (PNG copy)> <./Images/HorseS
+urface.png (PNG copy)>] <Images/Plugin.png, id=23, 325.59537pt x 204.765pt>
+File: Images/Plugin.png Graphic file (type png)
 
-LaTeX Warning: Reference `fig:Plugin' on page 5 undefined on input line 201.
-
-(./vtkPoissionReconstruction.bbl (./vtkPoissionReconstruction.brf)
+<use Images/Plugin.png> (./vtkPoissionReconstruction.bbl
+(./vtkPoissionReconstruction.brf)
 \tf@brf=\write6
 \openout6 = `vtkPoissionReconstruction.brf'.
 
@@ -646,28 +650,31 @@ Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
-Non-PDF special ignored!] (./vtkPoissionReconstruction.aux)
-
-LaTeX Warning: There were undefined references.
-
- ) 
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored! <./Images/Plugin.png (PNG copy)>]
+(./vtkPoissionReconstruction.aux) ) 
 Here is how much of TeX's memory you used:
- 4467 strings out of 256216
- 58835 string characters out of 1917072
+ 4489 strings out of 256216
+ 59263 string characters out of 1917072
  130216 words of memory out of 1500000
- 7654 multiletter control sequences out of 10000+200000
- 40441 words of font info for 77 fonts, out of 1200000 for 2000
+ 7670 multiletter control sequences out of 10000+200000
+ 42026 words of font info for 79 fonts, out of 1200000 for 2000
  646 hyphenation exceptions out of 8191
  41i,11n,42p,625b,374s stack positions out of 5000i,500n,6000p,200000b,15000s
-{/usr/share/texmf/fonts/enc/dvips/base/8r.enc}</usr/share/texmf/fonts/type1/b
-luesky/cm/cmsy10.pfb></usr/share/texmf/fonts/type1/urw/courier/ucrr8a.pfb></usr
-/share/texmf/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/share/texmf/fonts/type1/
-urw/helvetic/uhvro8a.pfb></usr/share/texmf/fonts/type1/urw/times/utmb8a.pfb></u
-sr/share/texmf/fonts/type1/urw/times/utmr8a.pfb></usr/share/texmf/fonts/type1/u
-rw/times/utmri8a.pfb>
-Output written on vtkPoissionReconstruction.pdf (5 pages, 79650 bytes).
+{/usr/share/texmf/fonts/enc/dvips/base/8r.en
+c}</usr/share/texmf/fonts/type1/bluesky/cm/cmsy10.pfb></usr/share/texmf/fonts/t
+ype1/urw/courier/ucrr8a.pfb></usr/share/texmf/fonts/type1/urw/helvetic/uhvr8a.p
+fb></usr/share/texmf/fonts/type1/urw/helvetic/uhvro8a.pfb></usr/share/texmf/fon
+ts/type1/urw/times/utmb8a.pfb></usr/share/texmf/fonts/type1/urw/times/utmr8a.pf
+b></usr/share/texmf/fonts/type1/urw/times/utmri8a.pfb>
+Output written on vtkPoissionReconstruction.pdf (5 pages, 342821 bytes).
 PDF statistics:
- 47 PDF objects out of 1000 (max. 8388607)
+ 50 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 131072)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

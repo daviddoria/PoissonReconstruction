@@ -166,46 +166,47 @@ reconstructionFilter->SetVerbose(0);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Demonstration}
-To demonstrate surface reconstruction, we use points sampled from a sphere. We computed the normals of these points using a previously submitted class, vtkPointSetNormalEstimation. We oriented these normals using another previously submitted class, vtkPointSetNormalOrientation. The resulting oriented point set is shown in Figure \ref{fig:SpherePoints}. The signed distance volume, an intermediate step, is shown for clarity in \ref{fig:SignedDistances}. In Figure \ref{fig:SphereSurface}, we show the final reconstructed surface.
-% 
-% \begin{figure}[ht!]
-% \centering
-% \subfigure[Oriented point set]{
-% \includegraphics[width=0.3\linewidth]{Images/SpherePoints}
-% \label{fig:SpherePoints}
-% }
-% \subfigure[Interpolated volume of signed distances]{
-% \includegraphics[width=0.3\linewidth]{Images/SignedDistances}
-% \label{fig:SignedDistances}
-% }
-% \subfigure[Sphere surface]{
-% \includegraphics[width=0.3\linewidth]{Images/SphereSurface}
-% \label{fig:SphereSurface}
-% }
-% \caption{Surface reconstruction demonstration.}
-% \label{fig:SurfaceReconstruction}
-% \end{figure}
+To demonstrate Poisson surface reconstruction, we use an oriented point cloud of a horse. This data set is shown in Figure \ref{fig:HorsePoints}. In Figure \ref{fig:HorseSurface}, we show the reconstructed surface.
+
+\begin{figure}[H]
+\centering
+\subfigure[Horse oriented point set]{
+\includegraphics[width=0.3\linewidth]{Images/HorsePoints}
+\label{fig:HorsePoints}
+}
+\subfigure[Horse surface]{
+\includegraphics[width=0.3\linewidth]{Images/HorseSurface}
+\label{fig:HorseSurface}
+}
+\caption{Poisson surface reconstruction demonstration.}
+\label{fig:SurfaceReconstruction}
+\end{figure}
 
 \subsection{Code Snippet}
 \begin{verbatim}
+vtkSmartPointer<vtkXMLPolyDataReader> reader =
+	vtkSmartPointer<vtkXMLPolyDataReader>::New();
+reader->SetFileName(inputFileName.c_str());
+reader->Update();
 
+vtkSmartPointer<vtkPoissonReconstruction> poissonFilter = 
+	vtkSmartPointer<vtkPoissonReconstruction>::New();
+poissonFilter->SetDepth( depth );
+poissonFilter->SetInputConnection(reader->GetOutputPort());
+poissonFilter->Update();
 \end{verbatim}
-
-%%%%%%%%%%%%%%%%%%%%%
-\section{Future Work}
-The algorithm implemented in this paper is very sensitive to noise error in the normal computation, the grid spacing, and the density of the points. There are several newer techniques, such as Poisson surface reconstruction, that we intend to implement for VTK in the future.
 
 %%%%%%%%%%%%%%%%%%%%%
 \pagebreak
 \section{Paraview Plugin}
 For convenience, this code is shipped with a Paraview filter plugin. The plugin provides an easy way to set the parameters as well as integrate the new code into your workflow. A screenshot of the plugin interface is shown in Figure \ref{fig:Plugin}.
 
-% \begin{figure}[H]
-% \centering
-% \includegraphics[width=0.3\linewidth]{Images/Plugin}
-% \label{fig:Plugin}
-% \caption{Paraview plugin screenshot}
-% \end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.3\linewidth]{Images/Plugin}
+\label{fig:Plugin}
+\caption{Paraview plugin screenshot}
+\end{figure}
 
 \bibliographystyle{plain}
 \bibliography{shortbib}

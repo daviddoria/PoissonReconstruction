@@ -11,7 +11,7 @@
 
 #include "MultiGridOctest.h"
 #include "MultiGridOctreeData.h"
-#include "MemoryUsage.h"
+//#include "MemoryUsage.h"
 
 vtkCxxRevisionMacro(vtkPoissonReconstruction, "$Revision: 1.70 $");
 vtkStandardNewMacro(vtkPoissonReconstruction);
@@ -57,79 +57,70 @@ int vtkPoissonReconstruction::RequestData(vtkInformation *vtkNotUsed(request),
   const int Degree = 2;
   
   double t;
-  //NOTE: tt is unused (so I commented it)
-//   double tt=Time();
+
   Point3D<float> center;
   Real scale=1.0;
   Real isoValue=0;
   Octree<Degree> tree;
-  PPolynomial<Degree> ReconstructionFunction = PPolynomial<Degree>::GaussianApproximation();
+  PPolynomial<Degree> reconstructionFunction = PPolynomial<Degree>::GaussianApproximation();
 
-  center.coords[0]=center.coords[1]=center.coords[2]=0;
+  center.coords[0] = 0;
+  center.coords[1] = 0;
+  center.coords[2] = 0;
   
   TreeOctNode::SetAllocator(MEMORY_ALLOCATOR_BLOCK_SIZE);
 
-  t=Time();
   this->KernelDepth = this->Depth - 2;
   
-  tree.setFunctionData(ReconstructionFunction,this->Depth,0,Real(1.0)/(1<<this->Depth));
-  DumpOutput("Function Data Set In: %lg\n",Time()-t);
-  size_t memoryusage = MemoryInfo::Usage();
-  DumpOutput("Memory Usage: %.3f MB\n",float(memoryusage)/(1<<20));
+  tree.setFunctionData(reconstructionFunction,this->Depth,0,Real(1.0)/(1<<this->Depth));
+  //DumpOutput("Function Data Set In: %lg\n",Time()-t);
+  //size_t memoryusage = MemoryInfo::Usage();
+  //DumpOutput("Memory Usage: %.3f MB\n",float(memoryusage)/(1<<20));
   if(this->KernelDepth > this->Depth)
     {
     fprintf(stderr,"KernelDepth can't be greater than Depth: %d <= %d\n",this->KernelDepth,this->Depth);
     return EXIT_FAILURE;
     }
 
-  t=Time();
-
   tree.setTree(input,this->Depth,this->KernelDepth,Real(this->SamplesPerNode),this->Scale,center,scale,!this->NoResetSamples,this->Confidence);
 
-  DumpOutput("Leaves/Nodes: %d/%d\n",tree.tree.leaves(),tree.tree.nodes());
-  DumpOutput("   Tree Size: %.3f MB\n",float(sizeof(TreeOctNode)*tree.tree.nodes())/(1<<20));
-  DumpOutput("Memory Usage: %.3f MB\n",float(MemoryInfo::Usage())/(1<<20));
+  //DumpOutput("Leaves/Nodes: %d/%d\n",tree.tree.leaves(),tree.tree.nodes());
+  //DumpOutput("   Tree Size: %.3f MB\n",float(sizeof(TreeOctNode)*tree.tree.nodes())/(1<<20));
+  //DumpOutput("Memory Usage: %.3f MB\n",float(MemoryInfo::Usage())/(1<<20));
 
   if(!NoClipTree)
     {
-    t=Time();
     tree.ClipTree();
-    DumpOutput("Tree Clipped In: %lg\n",Time()-t);
-    DumpOutput("Leaves/Nodes: %d/%d\n",tree.tree.leaves(),tree.tree.nodes());
-    DumpOutput("   Tree Size: %.3f MB\n",float(sizeof(TreeOctNode)*tree.tree.nodes())/(1<<20));
+    //DumpOutput("Tree Clipped In: %lg\n",Time()-t);
+    //DumpOutput("Leaves/Nodes: %d/%d\n",tree.tree.leaves(),tree.tree.nodes());
+    //DumpOutput("   Tree Size: %.3f MB\n",float(sizeof(TreeOctNode)*tree.tree.nodes())/(1<<20));
     }
 
-  t=Time();
   tree.finalize1(this->Refine);
-  DumpOutput("Finalized 1 In: %lg\n",Time()-t);
-  DumpOutput("Leaves/Nodes: %d/%d\n",tree.tree.leaves(),tree.tree.nodes());
-  DumpOutput("Memory Usage: %.3f MB\n",float(MemoryInfo::Usage())/(1<<20));
+  //DumpOutput("Finalized 1 In: %lg\n",Time()-t);
+  //DumpOutput("Leaves/Nodes: %d/%d\n",tree.tree.leaves(),tree.tree.nodes());
+  //DumpOutput("Memory Usage: %.3f MB\n",float(MemoryInfo::Usage())/(1<<20));
 
-  t=Time();
-  tree.maxMemoryUsage=0;
+//  tree.maxMemoryUsage=0;
   tree.SetLaplacianWeights();
-  DumpOutput("Memory Usage: %.3f MB\n",float(MemoryInfo::Usage())/(1<<20));
+  //DumpOutput("Memory Usage: %.3f MB\n",float(MemoryInfo::Usage())/(1<<20));
 
-  t=Time();
   tree.finalize2(this->Refine);
-  DumpOutput("Finalized 2 In: %lg\n",Time()-t);
-  DumpOutput("Leaves/Nodes: %d/%d\n",tree.tree.leaves(),tree.tree.nodes());
-  DumpOutput("Memory Usage: %.3f MB\n",float(MemoryInfo::Usage())/(1<<20));
+  //DumpOutput("Finalized 2 In: %lg\n",Time()-t);
+  //DumpOutput("Leaves/Nodes: %d/%d\n",tree.tree.leaves(),tree.tree.nodes());
+  //DumpOutput("Memory Usage: %.3f MB\n",float(MemoryInfo::Usage())/(1<<20));
 
-  tree.maxMemoryUsage=0;
-  t=Time();
+  //tree.maxMemoryUsage=0;
   tree.LaplacianMatrixIteration(this->SolverDivide);
-  DumpOutput("Memory Usage: %.3f MB\n",float(MemoryInfo::Usage())/(1<<20));
+  //DumpOutput("Memory Usage: %.3f MB\n",float(MemoryInfo::Usage())/(1<<20));
 
   CoredVectorMeshData mesh;
-  tree.maxMemoryUsage=0;
-  t=Time();
+  //tree.maxMemoryUsage=0;
   isoValue=tree.GetIsoValue();
-  DumpOutput("Got average in: %f\n",Time()-t);
-  DumpOutput("Iso-Value: %e\n",isoValue);
-  DumpOutput("Memory Usage: %.3f MB\n",float(tree.MemoryUsage()));
+  //DumpOutput("Got average in: %f\n",Time()-t);
+  //DumpOutput("Iso-Value: %e\n",isoValue);
+  //DumpOutput("Memory Usage: %.3f MB\n",float(tree.MemoryUsage()));
 
-  t=Time();
   if(this->IsoDivide)
     {
     tree.GetMCIsoTriangles(isoValue,this->IsoDivide,&mesh);
@@ -141,62 +132,63 @@ int vtkPoissonReconstruction::RequestData(vtkInformation *vtkNotUsed(request),
   
   //PlyWriteTriangles(Out.value,&mesh,PLY_BINARY_NATIVE,center,scale,comments,commentNum);
 
-    //create output
-    vtkSmartPointer<vtkPoints> points = 
-        vtkSmartPointer<vtkPoints>::New();
-    Point3D<float> p;
-	for (unsigned int i = 0; i < static_cast< unsigned int >(mesh.inCorePoints.size()); i++)
-      {
-		p = mesh.inCorePoints[i];
-		points->InsertNextPoint(p.coords[0]*scale + center.coords[0],
-		                        p.coords[1]*scale + center.coords[1],
-                                p.coords[2]*scale + center.coords[2]);
-	 }
-	for(unsigned int i = 0; i < static_cast< unsigned int >( mesh.outOfCorePointCount() ); i++)
-      {
-		mesh.nextOutOfCorePoint(p);
-		points->InsertNextPoint(p.coords[0]*scale + center.coords[0],
-		                        p.coords[1]*scale + center.coords[1],
-                                p.coords[2]*scale + center.coords[2]);
-	 }
-	
-	// write faces
-     
+  //create output
+  vtkSmartPointer<vtkPoints> points = 
+      vtkSmartPointer<vtkPoints>::New();
+  Point3D<float> p;
+  
+  for (unsigned int i = 0; i < static_cast< unsigned int >(mesh.inCorePoints.size()); i++)
+    {
+    p = mesh.inCorePoints[i];
+    points->InsertNextPoint(p.coords[0]*scale + center.coords[0],
+                            p.coords[1]*scale + center.coords[1],
+                            p.coords[2]*scale + center.coords[2]);
+    }
+  for(unsigned int i = 0; i < static_cast< unsigned int >( mesh.outOfCorePointCount() ); i++)
+    {
+    mesh.nextOutOfCorePoint(p);
+    points->InsertNextPoint(p.coords[0]*scale + center.coords[0],
+                            p.coords[1]*scale + center.coords[1],
+                            p.coords[2]*scale + center.coords[2]);
+    }
+  
+  // write faces
+    
   vtkSmartPointer<vtkCellArray> triangles = 
-      vtkSmartPointer<vtkCellArray>::New();
+    vtkSmartPointer<vtkCellArray>::New();
+
+  TriangleIndex tIndex;
+  int inCoreFlag;
   
-	TriangleIndex tIndex;
-	int inCoreFlag;
-	
   unsigned int nr_faces = mesh.triangleCount();
-	for(unsigned int i = 0; i < nr_faces; i++)
-      {
-      vtkSmartPointer<vtkTriangle> triangle = 
-        vtkSmartPointer<vtkTriangle>::New();
-      
+  for(unsigned int i = 0; i < nr_faces; i++)
+    {
+    vtkSmartPointer<vtkTriangle> triangle = 
+      vtkSmartPointer<vtkTriangle>::New();
+    
   
-      mesh.nextTriangle(tIndex,inCoreFlag);
-      
-      if(!(inCoreFlag & CoredMeshData::IN_CORE_FLAG[0]))
-        {
-        tIndex.idx[0]+=int(mesh.inCorePoints.size());
-        }
-      if(!(inCoreFlag & CoredMeshData::IN_CORE_FLAG[1]))
-        {
-        tIndex.idx[1]+=int(mesh.inCorePoints.size());
-        }
-      if(!(inCoreFlag & CoredMeshData::IN_CORE_FLAG[2]))
-        {
-        tIndex.idx[2]+=int(mesh.inCorePoints.size());
-        }
-      
-      for(unsigned int j = 0; j < 3; j++)
-        {
-        triangle->GetPointIds()->SetId(j, tIndex.idx[j]);
-        }
-        
-      triangles->InsertNextCell(triangle);
+    mesh.nextTriangle(tIndex,inCoreFlag);
+    
+    if(!(inCoreFlag & CoredMeshData::IN_CORE_FLAG[0]))
+      {
+      tIndex.idx[0]+=int(mesh.inCorePoints.size());
       }
+    if(!(inCoreFlag & CoredMeshData::IN_CORE_FLAG[1]))
+      {
+      tIndex.idx[1]+=int(mesh.inCorePoints.size());
+      }
+    if(!(inCoreFlag & CoredMeshData::IN_CORE_FLAG[2]))
+      {
+      tIndex.idx[2]+=int(mesh.inCorePoints.size());
+      }
+    
+    for(unsigned int j = 0; j < 3; j++)
+      {
+      triangle->GetPointIds()->SetId(j, tIndex.idx[j]);
+      }
+      
+    triangles->InsertNextCell(triangle);
+    }
       
   output->SetPoints(points);
   output->SetPolys(triangles);

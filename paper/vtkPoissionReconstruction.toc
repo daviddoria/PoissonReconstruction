@@ -9,6 +9,5 @@
 \contentsline {subsubsection}{Confidence}{3}{section*.7}
 \contentsline {subsubsection}{Verbose}{3}{section*.8}
 \contentsline {subsection}{\numberline {2.2}Demonstration}{3}{subsection.2.2}
-\contentsline {subsection}{\numberline {2.3}Code Snippet}{3}{subsection.2.3}
-\contentsline {section}{\numberline {3}Future Work}{4}{section.3}
-\contentsline {section}{\numberline {4}Paraview Plugin}{5}{section.4}
+\contentsline {subsection}{\numberline {2.3}Code Snippet}{4}{subsection.2.3}
+\contentsline {section}{\numberline {3}Paraview Plugin}{5}{section.3}

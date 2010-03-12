@@ -12,9 +12,7 @@ if(BUILD_PARAVIEW_PLUGIN)
 SUBDIRS(plugin)
 endif(BUILD_PARAVIEW_PLUGIN)
 
-ADD_EXECUTABLE(PoissonReconstruction Example.cxx vtkPoissonReconstruction.cxx Factor.cpp Geometry.cpp MarchingCubes.cpp Time.cpp MultiGridOctest.cpp MultiGridOctreeData.cpp 
-#MemoryUsage.h 
-)
+ADD_EXECUTABLE(PoissonReconstruction Example.cxx vtkPoissonReconstruction.cxx Factor.cpp Geometry.cpp MarchingCubes.cpp MultiGridOctest.cpp MultiGridOctreeData.cpp )
 TARGET_LINK_LIBRARIES(PoissonReconstruction vtkHybrid)
 
 ADD_TEST( PoissonReconstructionTest 
