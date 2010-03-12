@@ -8,10 +8,10 @@ int main(int argc, char *argv[])
 {
   if( argc < 4 )
     {
-    std::cout <<"PoissonReconstruction takes 3 arguments: " <<std::endl;
-    std::cout <<"1-Input file (*.vtp)" <<std::endl;
-    std::cout <<"2-Depth" <<std::endl;
-    std::cout <<"3-Output file (*.vtp)" <<std::endl;
+    cout << "PoissonReconstruction takes 3 arguments: " << endl;
+    cout << "1-Input file (*.vtp)" << endl;
+    cout << "2-Depth" << endl;
+    cout << "3-Output file (*.vtp)" << endl;
     return EXIT_FAILURE;
     }
 
