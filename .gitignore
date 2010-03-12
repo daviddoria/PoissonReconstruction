@@ -3,7 +3,6 @@
 Doxyfile
 BUILD/*
 bin/*
-<<<<<<< HEAD:.gitignore
 *.aux
 *.toc
 *.bbl
@@ -11,10 +10,9 @@ bin/*
 *.brf
 *.log
 *.out
-=======
 paper/*.aux
 paper/*.log
 paper/*.out
 paper/*.pdf
 paper/*.toc
->>>>>>> 29e12a38d74c74ae8a132d28ee9f36300dc8e8ee:.gitignore
+
