@@ -56,8 +56,6 @@ int vtkPoissonReconstruction::RequestData(vtkInformation *vtkNotUsed(request),
     
   const int Degree = 2;
   
-  double t;
-
   Point3D<float> center;
   Real scale=1.0;
   Real isoValue=0;

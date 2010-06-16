@@ -771,7 +771,6 @@ inline int Octree<Degree>::LaplacianMatrixIteration(const int& subdivideDepth)
 {
 	int i,iter=0;
 	SortedTreeNodes sNodes;
-	double t;
 	fData.setDotTables(fData.D2_DOT_FLAG);
 	sNodes.set(tree,1);
 
@@ -803,7 +802,6 @@ inline int Octree<Degree>::SolveFixedDepthMatrix(const int& depth,const SortedTr
 	Vector<double> V,Solution;
 	SparseSymmetricMatrix<Real> matrix;
 	Real myRadius;
-	double gTime,sTime,uTime;
 	Real dx,dy,dz;
 	int x1,x2,y1,y2,z1,z2;
 	Vector<Real> Diagonal;
@@ -914,7 +912,6 @@ inline int Octree<Degree>::SolveFixedDepthMatrix(const int& depth,const int& sta
 	AdjacencyCountFunction acf;
 	Vector<Real> Values;
 	Vector<double> SubValues,SubSolution;
-	double gTime,sTime,uTime;
 	Real myRadius,myRadius2;
 	Real dx,dy,dz;
 	Vector<Real> Diagonal;
@@ -1367,7 +1364,6 @@ inline int Octree<Degree>::RestrictedLaplacianMatrixFunction::Function(const Tre
 template<int Degree>
 inline void Octree<Degree>::GetMCIsoTriangles(const Real& isoValue,CoredMeshData* mesh,const int& fullDepthIso,const int& nonLinearFit)
 {
-	double t;
 	TreeOctNode* temp;
 
 	hash_map<long long,int> roots;
