@@ -187,7 +187,8 @@ inline int OctNode<NodeData,Real>::maxDepth(void) const
     }
 	else
     {
-		int c,td;
+		int c = 0;
+    int td = 0;
 		for(int i=0;i<Cube::CORNERS;i++)
         {
 			td=children[i].maxDepth();

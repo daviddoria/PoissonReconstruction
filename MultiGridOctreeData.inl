@@ -2354,6 +2354,8 @@ inline int Octree<Degree>::GetRootIndex(const TreeOctNode* node,const int& edgeI
 		ri.node=finest;
 		ri.edgeIndex=finestIndex;
 		int offset,eIndex[2];
+    eIndex[0] = 0;
+    eIndex[1] = 0;
 		offset=BinaryNode<Real>::Index(d,off[o]);
 		switch(o){
 				case 0:
@@ -2680,6 +2682,9 @@ inline int Octree<Degree>::AddTriangles(CoredMeshData* mesh,std::vector<CoredPoi
 		for(int i=0;i<int(t.triangles.size());i++){
 			TriangleIndex tri;
 			int idx[3];
+      idx[0] = 0;
+      idx[1] = 0;
+      idx[2] = 0;
 			int inCoreFlag=0;
 			t.factor(i,idx[0],idx[1],idx[2]);
 			for(int j=0;j<3;j++){
