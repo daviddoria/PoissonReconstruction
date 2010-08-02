@@ -1,30 +1,35 @@
-/*
-Copyright (c) 2006, Michael Kazhdan and Matthew Bolitho
-All rights reserved.
+/*=========================================================================
+ Authors: Michael Kazhdan and Matthew Bolitho
+ at Johns Hopkins University, 2006-10
 
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
+ Copyright (c) 2006-10, Michael Kazhdan and Matthew Bolitho, 
+ Johns Hopkins University.
+ All rights reserved.
 
-Redistributions of source code must retain the above copyright notice, this list of
-conditions and the following disclaimer. Redistributions in binary form must reproduce
-the above copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the distribution. 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
 
-Neither the name of the Johns Hopkins University nor the names of its contributors
-may be used to endorse or promote products derived from this software without specific
-prior written permission. 
+ Redistributions of source code must retain the above copyright notice,
+ this list of conditions and the following disclaimer.
+ Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+ Neither the name of the Johns Hopkins University nor the names of its 
+ contributors may be used to endorse or promote products derived from this 
+ software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO THE IMPLIED WARRANTIES 
-OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
-SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
-TO, PROCUREMENT OF SUBSTITUTE  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-DAMAGE.
-*/
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
+ BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=========================================================================*/
 #include <math.h>
 #include "MarchingCubes.h"
 
@@ -60,7 +65,7 @@ void Square::FactorEdgeIndex(const int& idx,int& orientation,int& i){
 	};
 }
 void Square::EdgeCorners(const int& idx,int& c1,int& c2){
-	int orientation,i;
+	int orientation=0,i=0;
 	FactorEdgeIndex(idx,orientation,i);
 	switch(orientation){
 		case 0:
@@ -75,7 +80,7 @@ void Square::EdgeCorners(const int& idx,int& c1,int& c2){
 }
 int Square::ReflectEdgeIndex(const int& idx,const int& edgeIndex){
 	int orientation=edgeIndex%2;
-	int o,i;
+	int o=0,i=0;
 	FactorEdgeIndex(idx,o,i);
 	if(o!=orientation){return idx;}
 	else{return EdgeIndex(o,(i+1)%2);}
@@ -363,7 +368,7 @@ int MarchingSquares::AddEdgeIndices(const double v[Square::CORNERS],const double
 	return nEdges;
 }
 void MarchingSquares::SetVertex(const int& e,const double values[Square::CORNERS],const double& iso){
-	int o,i,c1,c2;
+	int o=0,i=0,c1=0,c2=0;
 	Square::FactorEdgeIndex(e,o,i);
 	Square::EdgeCorners(e,c1,c2);
 	switch(o){
