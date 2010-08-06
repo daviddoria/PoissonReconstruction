@@ -39,13 +39,17 @@ class AllocatorState {
 public:
   int index, remains;
   };
-/** This templated class assists in memory allocation and is well suited for instances
-  * when it is known that the sequence of memory allocations is performed in a stack-based
-  * manner, so that memory allocated last is released first. It also preallocates memory
-  * in chunks so that multiple requests for small chunks of memory do not require separate
-  * system calls to the memory manager.
-  * The allocator is templated off of the class of objects that we would like it to allocate,
-  * ensuring that appropriate constructors and destructors are called as necessary.
+/** This templated class assists in memory allocation and is well suited 
+ * for instances when it is known that the sequence of memory allocations 
+ * is performed in a stack-based manner, so that memory allocated last is 
+ * released first. It also preallocates memory in chunks so that multiple 
+ * requests for small chunks of memory do not require separate system calls
+ *  to the memory manager.
+  * The allocator is templated off of the class of objects that we would 
+  * like it to allocate, ensuring that appropriate constructors and 
+  * destructors are called as necessary.
+  *
+  * \ingroup PoissonReconstruction
   */
 template<class T>
 class Allocator {
@@ -62,8 +66,8 @@ public:
     reset();
     }
 
-  /** This method is the allocators destructor. It frees up any of the memory that
-    * it has allocated. */
+  /** This method is the allocators destructor. 
+ * It frees up any of the memory that it has allocated. */
   void reset(void)
   {
     for (size_t i = 0; i < memory.size(); i++) { delete[] memory[i];}
@@ -79,10 +83,11 @@ public:
     return s;
   }
 
-  /** This method rolls back the allocator so that it makes all of the memory previously
-    * allocated available for re-allocation. Note that it does it not call the constructor
-    * again, so after this method has been called, assumptions about the state of the values
-    * in memory are no longer valid. */
+  /** This method rolls back the allocator so that it makes all of the 
+ * memory previously allocated available for re-allocation. Note that it 
+ * does it not call the constructor again, so after this method has been 
+ * called, assumptions about the state of the values in memory are no 
+ * longer valid. */
   void rollBack(void)
   {
     if (memory.size())
@@ -99,10 +104,11 @@ public:
       remains = blockSize;
       }
   }
-  /** This method rolls back the allocator to the previous memory state and makes all of the memory previously
-    * allocated available for re-allocation. Note that it does it not call the constructor
-    * again, so after this method has been called, assumptions about the state of the values
-    * in memory are no longer valid. */
+  /** This method rolls back the allocator to the previous memory state 
+ * and makes all of the memory previously allocated available for 
+ * re-allocation. Note that it does it not call the constructor again, 
+ * so after this method has been called, assumptions about the state of 
+ * the values in memory are no longer valid. */
   void rollBack(const AllocatorState& state)
   {
     if (state.index < index || (state.index == index && state.remains < remains))
@@ -142,8 +148,9 @@ public:
       }
   }
 
-  /** This method initiallizes the constructor and the blockSize variable specifies the
-    * the number of objects that should be pre-allocated at a time. */
+  /** This method initiallizes the constructor and the blockSize variable 
+ * specifies the the number of objects that should be pre-allocated at a 
+ * time. */
   void set(const int& iBlockSize)
   {
     reset();
@@ -152,10 +159,12 @@ public:
     remains = 0;
   }
 
-  /** This method returns a pointer to an array of elements objects. If there is left over pre-allocated
-    * memory, this method simply returns a pointer to the next free piece of memory, otherwise it pre-allocates
-    * more memory. Note that if the number of objects requested is larger than the value blockSize with which
-    * the allocator was initialized, the request for memory will fail.
+  /** This method returns a pointer to an array of elements objects. If 
+ * there is left over pre-allocated memory, this method simply returns a 
+ * pointer to the next free piece of memory, otherwise it pre-allocates 
+ * more memory. Note that if the number of objects requested is larger 
+ * than the value blockSize with which the allocator was initialized, the 
+ * request for memory will fail.
     */
   T* newElements(const int& elements = 1)
   {
