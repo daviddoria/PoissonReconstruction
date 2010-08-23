@@ -34,7 +34,6 @@
 #ifndef __VECTOR_HPP
 #define __VECTOR_HPP
 
-#define Assert assert
 #include <assert.h>
 
 template<class T>

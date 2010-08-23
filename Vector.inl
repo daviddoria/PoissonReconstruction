@@ -112,7 +112,7 @@ inline void Vector<T>::SetZero(void)
 template<class T>
 inline const T& Vector<T>::operator () (size_t i) const
 {
-	Assert( i < m_N );
+	assert( i < m_N );
 	return m_pV[i];
 }
 template<class T>
@@ -364,7 +364,7 @@ inline void NVector<T,Dim>::SetZero(void)
 template<class T,int Dim>
 inline const T* NVector<T,Dim>::operator () (size_t i) const
 {
-	Assert( i < m_N );
+	assert( i < m_N );
 	return &m_pV[i*Dim];
 }
 
