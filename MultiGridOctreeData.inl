@@ -2,7 +2,7 @@
  Authors: Michael Kazhdan and Matthew Bolitho
  at Johns Hopkins University, 2006-10
 
- Copyright (c) 2006-10, Michael Kazhdan and Matthew Bolitho, 
+ Copyright (c) 2006-10, Michael Kazhdan and Matthew Bolitho,
  Johns Hopkins University.
  All rights reserved.
 
@@ -14,8 +14,8 @@
  Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided with the distribution.
- Neither the name of the Johns Hopkins University nor the names of its 
- contributors may be used to endorse or promote products derived from this 
+ Neither the name of the Johns Hopkins University nor the names of its
+ contributors may be used to endorse or promote products derived from this
  software without specific prior written permission.
 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -74,10 +74,10 @@ inline void SortedTreeNodes::set(TreeOctNode& root,const int& setIndex)
 {
 	if(nodeCount)
     {delete[] nodeCount;}
-    
+
 	if(treeNodes)
     {delete[] treeNodes;}
-    
+
 	maxDepth=root.maxDepth()+1;
 	nodeCount=new int[maxDepth+1];
 	treeNodes=new TreeOctNode*[root.nodes()];
@@ -90,17 +90,17 @@ inline void SortedTreeNodes::set(TreeOctNode& root,const int& setIndex)
 		temp=root.nextNode(temp);
 	}
 	qsort(treeNodes,cnt,sizeof(const TreeOctNode*),TreeOctNode::CompareForwardPointerDepths);
-    
+
 	for(i=0;i<=maxDepth;i++)
     {nodeCount[i]=0;}
-    
+
 	for(i=0;i<cnt;i++)
     {
 		if(setIndex)
         {treeNodes[i]->nodeData.nodeIndex=i;}
 		nodeCount[treeNodes[i]->depth()+1]++;
 	}
-    
+
 	for(i=1;i<=maxDepth;i++)
     {nodeCount[i]+=nodeCount[i-1];}
 }
@@ -248,10 +248,10 @@ inline void Octree<Degree>::NonLinearSplatOrientedPoint(const Point3D<Real>& pos
 
 	if(newDepth<minDepth)
     {newDepth=Real(minDepth);}
-    
+
 	if(newDepth>maxDepth)
     {newDepth=Real(maxDepth);}
-    
+
 	int topDepth=int(ceil(newDepth));
 
 	dx=1.0-(topDepth-newDepth);
@@ -267,7 +267,7 @@ inline void Octree<Degree>::NonLinearSplatOrientedPoint(const Point3D<Real>& pos
 	}
 	while(temp->depth()>topDepth)
     {temp=temp->parent;}
-    
+
 	while(temp->depth()<topDepth)
     {
 		if(!temp->children)
@@ -285,7 +285,7 @@ inline void Octree<Degree>::NonLinearSplatOrientedPoint(const Point3D<Real>& pos
 	twidth=1.0/(1<<temp->depth());
 	for(i=0;i<DIMENSION;i++)
     {n.coords[i]=normal.coords[i]*alpha/Real(pow(twidth,3))*Real(dx);}
-    
+
 	NonLinearSplatOrientedPoint(temp,position,n);
 	if(fabs(1.0-dx)>EPSILON)
     {
@@ -295,7 +295,7 @@ inline void Octree<Degree>::NonLinearSplatOrientedPoint(const Point3D<Real>& pos
 
 		for(i=0;i<DIMENSION;i++)
         {n.coords[i]=normal.coords[i]*alpha/Real(pow(twidth,3))*Real(dx);}
-        
+
 		NonLinearSplatOrientedPoint(temp,position,n);
 	}
 }
@@ -401,18 +401,18 @@ inline int Octree<Degree>::setTree(vtkSmartPointer<vtkPolyData> data,const int& 
 							const int& kernelDepth,const Real& samplesPerNode,const Real& scaleFactor,Point3D<Real>& center,Real& scale,
 							const int& resetSamples,const int& useConfidence)
 {
-  
-   vtkSmartPointer<vtkFloatArray> dataNormals = 
-      vtkFloatArray::SafeDownCast(data->GetPointData()->GetNormals());
+
+   vtkSmartPointer<vtkFloatArray> dataNormals =
+      vtkFloatArray::SafeDownCast(data->GetPointData()->GetNormals("Normals"));
   if(!dataNormals)
     {
     //vtkErrorMacro("The data set does not contain normals!");
     cout << "The data set does not contain normals! This is a fatal error!" << endl;
     return 0;
     }
-  
+
   Point3D<Real> min,max,position,normal,myCenter;
-  
+
   Real myWidth;
 
   TreeOctNode* temp;
@@ -425,20 +425,20 @@ inline int Octree<Degree>::setTree(vtkSmartPointer<vtkPolyData> data,const int& 
     {
     splatDepth=0;
     }
-    
+
   // Get the center and scale
   double bounds[6];
   data->GetBounds(bounds); //xmin, xmax, ymin, ymax, zmin, zmax
-  
+
   min.coords[0] = bounds[0];
   max.coords[0] = bounds[1];
   min.coords[1] = bounds[2];
   max.coords[1] = bounds[3];
   min.coords[2] = bounds[4];
   max.coords[2] = bounds[5];
-  
+
   DumpOutput("Setting bounding box\n");
-  
+
   for(unsigned int i = 0; i < DIMENSION; i++)
     {
       if(scale<max.coords[i]-min.coords[i])
@@ -447,22 +447,22 @@ inline int Octree<Degree>::setTree(vtkSmartPointer<vtkPolyData> data,const int& 
         }
       center.coords[i]=Real(max.coords[i]+min.coords[i])/2.0;
     }
-    
+
   scale*=scaleFactor;
   for(unsigned int dim = 0; dim < DIMENSION; dim++)
     {
     center.coords[dim] -= scale/2.0;
     }
-    
+
   if(splatDepth>0)
     {
       DumpOutput("Setting sample weights\n");
-      
+
       for(vtkIdType p = 0; p < data->GetNumberOfPoints(); p++)
         {
         double coordinate[3];
         data->GetPoint(p, coordinate);
-        
+
         double n[3];
         dataNormals->GetTuple(p, n);
 
@@ -471,7 +471,7 @@ inline int Octree<Degree>::setTree(vtkSmartPointer<vtkPolyData> data,const int& 
           position.coords[dim]=(coordinate[dim]-center.coords[dim])/scale;
           normal.coords[dim]=n[dim];
           }
-      
+
         myCenter.coords[0]=myCenter.coords[1]=myCenter.coords[2]=Real(0.5);
         myWidth=Real(1.0);
         for(unsigned int dim = 0; dim < DIMENSION; dim++)
@@ -531,24 +531,24 @@ inline int Octree<Degree>::setTree(vtkSmartPointer<vtkPolyData> data,const int& 
 
   DumpOutput("Adding Points and Normals\n");
   this->normals=new std::vector<Point3D<Real> >();
-  
+
   for(vtkIdType p = 0; p < data->GetNumberOfPoints(); p++)
     {
     double coordinate[3];
     data->GetPoint(p, coordinate);
-    
+
     double n[3];
     dataNormals->GetTuple(p, n);
-    
+
     for(unsigned int dim = 0; dim < DIMENSION; dim++)
       {
       position.coords[dim]=(coordinate[dim]-center.coords[dim])/scale;
       normal.coords[dim]=n[dim];
       }
-      
+
     myCenter.coords[0]=myCenter.coords[1]=myCenter.coords[2]=Real(0.5);
     myWidth=Real(1.0);
-    
+
     for(unsigned int dim = 0; dim < DIMENSION; dim++)
       {
       if(position.coords[dim]<myCenter.coords[dim]-myWidth/2.0 || position.coords[dim]>myCenter.coords[dim]+myWidth/2.0)
@@ -1696,7 +1696,7 @@ inline void Octree<Degree>::SetIsoSurfaceCorners(const Real& isoValue,const int&
 		temp->nodeData.mcIndex=0;
 		temp=tree.nextNode(temp);
 	}
-	TreeNodeData::UseIndex=0;	
+	TreeNodeData::UseIndex=0;
 	// Start by setting the corner values of all the nodes
 	cf.valueTables=fData.valueTables;
 	cf.res2=fData.res2;
@@ -1722,7 +1722,7 @@ inline void Octree<Degree>::SetIsoSurfaceCorners(const Real& isoValue,const int&
 				TreeOctNode* parent=temp->parent;
 				int c=int(temp-temp->parent->children);
 				int mcid=temp->nodeData.mcIndex&(1<<MarchingCubes::cornerMap[c]);
-				
+
 				if(mcid){
 					parent->nodeData.mcIndex|=mcid;
 					while(1){
@@ -1776,7 +1776,7 @@ inline void Octree<Degree>::SetIsoSurfaceCorners(const Real& isoValue,const int&
 				TreeOctNode* parent=temp->parent;
 				int c=int(temp-temp->parent->children);
 				int mcid=temp->nodeData.mcIndex&(1<<MarchingCubes::cornerMap[c]);
-				
+
 				if(mcid){
 					parent->nodeData.mcIndex|=mcid;
 					while(1){
@@ -1971,7 +1971,7 @@ inline int Octree<Degree>::IsBoundaryFace(const TreeOctNode* node,const int& fac
 
 template<int Degree>
 inline int Octree<Degree>::IsBoundaryEdge(const TreeOctNode* node,const int& edgeIndex,const int& subdivideDepth)
-{  
+{
 	int dir,x,y;
 	Cube::FactorEdgeIndex(edgeIndex,dir,x,y);
 	return IsBoundaryEdge(node,dir,x,y,subdivideDepth);
@@ -2316,7 +2316,7 @@ inline int Octree<Degree>::GetRootIndex(const TreeOctNode* node,const int& edgeI
 	int finestIndex;
 
 
-	// The assumption is that the super-edge has a root along it. 
+	// The assumption is that the super-edge has a root along it.
 	if(!(MarchingCubes::edgeMask[node->nodeData.mcIndex] & (1<<edgeIndex))){return 0;}
 
 	Cube::FacesAdjacentToEdge(edgeIndex,f1,f2);
