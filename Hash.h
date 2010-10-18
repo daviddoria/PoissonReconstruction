@@ -2,7 +2,7 @@
  Authors: Michael Kazhdan and Matthew Bolitho
  at Johns Hopkins University, 2006-10
 
- Copyright (c) 2006-10, Michael Kazhdan and Matthew Bolitho, 
+ Copyright (c) 2006-10, Michael Kazhdan and Matthew Bolitho,
  Johns Hopkins University.
  All rights reserved.
 
@@ -14,8 +14,8 @@
  Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided with the distribution.
- Neither the name of the Johns Hopkins University nor the names of its 
- contributors may be used to endorse or promote products derived from this 
+ Neither the name of the Johns Hopkins University nor the names of its
+ contributors may be used to endorse or promote products derived from this
  software without specific prior written permission.
 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -30,7 +30,7 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =========================================================================*/
- 
+
 #ifndef HASH_INCLUDED
 #define HASH_INCLUDED
 #ifdef WIN32
@@ -42,19 +42,23 @@ using namespace __gnu_cxx;
 
 namespace __gnu_cxx
 {
-template<> struct hash<long long> {
-  size_t operator ()(long long __x) const { return __x; }
-  };
-template<> struct hash<const long long> {
-  size_t operator ()(const long long __x) const { return __x; }
-  };
+template< >
+struct hash< long long > {
+  size_t operator()(long long __x) const { return __x; }
+};
+template< >
+struct hash< const long long > {
+  size_t operator()(const long long __x) const { return __x; }
+};
 
-template<> struct hash<unsigned long long> {
-  size_t operator ()(unsigned long long __x) const { return __x; }
-  };
-template<> struct hash<const unsigned long long> {
-  size_t operator ()(const unsigned long long __x) const { return __x; }
-  };
+template< >
+struct hash< unsigned long long > {
+  size_t operator()(unsigned long long __x) const { return __x; }
+};
+template< >
+struct hash< const unsigned long long > {
+  size_t operator()(const unsigned long long __x) const { return __x; }
+};
 }
 #endif // WIN32
 #endif // HASH_INCLUDED

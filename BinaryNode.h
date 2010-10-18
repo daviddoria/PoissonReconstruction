@@ -2,7 +2,7 @@
  Authors: Michael Kazhdan and Matthew Bolitho
  at Johns Hopkins University, 2006-10
 
- Copyright (c) 2006-10, Michael Kazhdan and Matthew Bolitho, 
+ Copyright (c) 2006-10, Michael Kazhdan and Matthew Bolitho,
  Johns Hopkins University.
  All rights reserved.
 
@@ -14,8 +14,8 @@
  Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided with the distribution.
- Neither the name of the Johns Hopkins University nor the names of its 
- contributors may be used to endorse or promote products derived from this 
+ Neither the name of the Johns Hopkins University nor the names of its
+ contributors may be used to endorse or promote products derived from this
  software without specific prior written permission.
 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -34,39 +34,44 @@
 #ifndef BINARY_NODE_INCLUDED
 #define BINARY_NODE_INCLUDED
 
-template<class Real>
-class BinaryNode {
+template< class Real >
+class BinaryNode
+{
 public:
-  static inline int CenterCount(int depth){ return 1 << depth;}
-  static inline int CumulativeCenterCount(int maxDepth){ return (1 << (maxDepth + 1)) - 1;}
-  static inline int Index(int depth, int offSet){ return (1 << depth) + offSet - 1;}
+  static inline int CenterCount(int depth){ return 1 << depth; }
+  static inline int CumulativeCenterCount(int maxDepth){ return ( 1 << ( maxDepth + 1 ) ) - 1; }
+  static inline int Index(int depth, int offSet){ return ( 1 << depth ) + offSet - 1; }
   static inline int CornerIndex(int maxDepth, int depth, int offSet, int forwardCorner)
-  { return (offSet + forwardCorner) << (maxDepth - depth);}
+  { return ( offSet + forwardCorner ) << ( maxDepth - depth ); }
   static inline Real CornerIndexPosition(int index, int maxDepth)
-  { return Real(index) / (1 << maxDepth);}
+  { return Real(index) / ( 1 << maxDepth ); }
   static inline Real Width(int depth)
-  { return Real(1.0 / (1 << depth));}
-  static inline void CenterAndWidth(int depth, int offset, Real& center, Real& width)
+  { return Real( 1.0 / ( 1 << depth ) ); }
+  static inline void CenterAndWidth(int depth, int offset, Real & center, Real & width)
   {
-    width = Real(1.0 / (1 << depth));
-    center = Real((0.5 + offset) * width);
+    width = Real( 1.0 / ( 1 << depth ) );
+    center = Real( ( 0.5 + offset ) * width );
   }
-  static inline void CenterAndWidth(int idx, Real& center, Real& width)
+
+  static inline void CenterAndWidth(int idx, Real & center, Real & width)
   {
     int depth, offset;
+
     DepthAndOffset(idx, depth, offset);
     CenterAndWidth(depth, offset, center, width);
   }
-  static inline void DepthAndOffset(int idx, int& depth, int& offset)
+
+  static inline void DepthAndOffset(int idx, int & depth, int & offset)
   {
     int i = idx + 1;
+
     depth = -1;
-    while (i)
+    while ( i )
       {
       i >>= 1;
       depth++;
       }
-    offset = (idx + 1) - (1 << depth);
+    offset = ( idx + 1 ) - ( 1 << depth );
   }
-  };
+};
 #endif // BINARY_NODE_INCLUDED

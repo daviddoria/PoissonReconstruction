@@ -2,7 +2,7 @@
  Authors: Michael Kazhdan and Matthew Bolitho
  at Johns Hopkins University, 2006-10
 
- Copyright (c) 2006-10, Michael Kazhdan and Matthew Bolitho, 
+ Copyright (c) 2006-10, Michael Kazhdan and Matthew Bolitho,
  Johns Hopkins University.
  All rights reserved.
 
@@ -14,8 +14,8 @@
  Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided with the distribution.
- Neither the name of the Johns Hopkins University nor the names of its 
- contributors may be used to endorse or promote products derived from this 
+ Neither the name of the Johns Hopkins University nor the names of its
+ contributors may be used to endorse or promote products derived from this
  software without specific prior written permission.
 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -36,109 +36,135 @@
 
 #include <assert.h>
 
-template<class T>
+template< class T >
 class Vector
-  {
+{
 public:
   Vector();
-  Vector(const Vector<T>& V);
+  Vector(const Vector< T > & V);
   Vector(size_t N);
-  Vector(size_t N, T* pV);
+  Vector(size_t N, T *pV);
   ~Vector();
 
-  const T& operator ()(size_t i) const;
-  T& operator ()(size_t i);
-  const T& operator [](size_t i) const;
-  T& operator [](size_t i);
+  const T & operator()(size_t i) const;
+
+  T & operator()(size_t i);
+
+  const T & operator[](size_t i) const;
+
+  T & operator[](size_t i);
 
   void SetZero();
 
   size_t Dimensions() const;
+
   void Resize(size_t N);
 
-  Vector operator *(const T& A) const;
-  Vector operator /(const T& A) const;
-  Vector operator -(const Vector& V) const;
-  Vector operator +(const Vector& V) const;
+  Vector operator *(const T & A) const;
 
-  Vector& operator *=(const T& A);
-  Vector& operator /=(const T& A);
-  Vector& operator +=(const Vector& V);
-  Vector& operator -=(const Vector& V);
+  Vector operator/(const T & A) const;
 
-  Vector& AddScaled(const Vector& V, const T& scale);
-  Vector& SubtractScaled(const Vector& V, const T& scale);
-  static void Add(const Vector& V1, const T& scale1, const Vector& V2, const T& scale2, Vector& Out);
-  static void Add(const Vector& V1, const T& scale1, const Vector& V2, Vector& Out);
+  Vector operator-(const Vector & V) const;
 
-  Vector operator -() const;
+  Vector operator+(const Vector & V) const;
 
-  Vector& operator =(const Vector& V);
+  Vector & operator*=(const T & A);
 
-  T Dot(const Vector& V) const;
+  Vector & operator/=(const T & A);
+
+  Vector & operator+=(const Vector & V);
+
+  Vector & operator-=(const Vector & V);
+
+  Vector & AddScaled(const Vector & V, const T & scale);
+
+  Vector & SubtractScaled(const Vector & V, const T & scale);
+
+  static void Add(const Vector & V1, const T & scale1, const Vector & V2, const T & scale2, Vector & Out);
+
+  static void Add(const Vector & V1, const T & scale1, const Vector & V2, Vector & Out);
+
+  Vector operator-() const;
+
+  Vector & operator=(const Vector & V);
+
+  T Dot(const Vector & V) const;
 
   T Length() const;
 
   T Norm(size_t Ln) const;
+
   void Normalize();
 
-  T* m_pV;
+  T *m_pV;
 protected:
   size_t m_N;
+};
 
-  };
-
-template<class T, int Dim>
+template< class T, int Dim >
 class NVector
-  {
+{
 public:
   NVector();
-  NVector(const NVector& V);
+  NVector(const NVector & V);
   NVector(size_t N);
-  NVector(size_t N, T* pV);
+  NVector(size_t N, T *pV);
   ~NVector();
 
-  const T* operator ()(size_t i) const;
-  T* operator ()(size_t i);
-  const T* operator [](size_t i) const;
-  T* operator [](size_t i);
+  const T * operator()(size_t i) const;
+
+  T * operator()(size_t i);
+
+  const T * operator[](size_t i) const;
+
+  T * operator[](size_t i);
 
   void SetZero();
 
   size_t Dimensions() const;
+
   void Resize(size_t N);
 
-  NVector operator *(const T& A) const;
-  NVector operator /(const T& A) const;
-  NVector operator -(const NVector& V) const;
-  NVector operator +(const NVector& V) const;
+  NVector operator *(const T & A) const;
 
-  NVector& operator *=(const T& A);
-  NVector& operator /=(const T& A);
-  NVector& operator +=(const NVector& V);
-  NVector& operator -=(const NVector& V);
+  NVector operator/(const T & A) const;
 
-  NVector& AddScaled(const NVector& V, const T& scale);
-  NVector& SubtractScaled(const NVector& V, const T& scale);
-  static void Add(const NVector& V1, const T& scale1, const NVector& V2, const T& scale2, NVector& Out);
-  static void Add(const NVector& V1, const T& scale1, const NVector& V2,                            NVector& Out);
+  NVector operator-(const NVector & V) const;
 
-  NVector operator -() const;
+  NVector operator+(const NVector & V) const;
 
-  NVector& operator =(const NVector& V);
+  NVector & operator*=(const T & A);
 
-  T Dot(const NVector& V) const;
+  NVector & operator/=(const T & A);
+
+  NVector & operator+=(const NVector & V);
+
+  NVector & operator-=(const NVector & V);
+
+  NVector & AddScaled(const NVector & V, const T & scale);
+
+  NVector & SubtractScaled(const NVector & V, const T & scale);
+
+  static void Add(const NVector & V1, const T & scale1, const NVector & V2, const T & scale2, NVector & Out);
+
+  static void Add(const NVector & V1, const T & scale1, const NVector & V2,                            NVector & Out);
+
+  NVector operator-() const;
+
+  NVector & operator=(const NVector & V);
+
+  T Dot(const NVector & V) const;
 
   T Length() const;
 
   T Norm(size_t Ln) const;
+
   void Normalize();
 
-  T* m_pV;
+  T *m_pV;
 protected:
   size_t m_N;
-
-  };
+};
 
 #include "Vector.inl"
 

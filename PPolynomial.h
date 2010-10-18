@@ -2,7 +2,7 @@
  Authors: Michael Kazhdan and Matthew Bolitho
  at Johns Hopkins University, 2006-10
 
- Copyright (c) 2006-10, Michael Kazhdan and Matthew Bolitho, 
+ Copyright (c) 2006-10, Michael Kazhdan and Matthew Bolitho,
  Johns Hopkins University.
  All rights reserved.
 
@@ -14,8 +14,8 @@
  Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided with the distribution.
- Neither the name of the Johns Hopkins University nor the names of its 
- contributors may be used to endorse or promote products derived from this 
+ Neither the name of the Johns Hopkins University nor the names of its
+ contributors may be used to endorse or promote products derived from this
  software without specific prior written permission.
 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -36,86 +36,107 @@
 #include <vector>
 #include "Polynomial.h"
 
-template<int Degree>
+template< int Degree >
 class StartingPolynomial
-  {
+{
 public:
-  Polynomial<Degree> p;
-  double             start;
+  Polynomial< Degree > p;
+  double               start;
 
-  template<int Degree2>
-  StartingPolynomial<Degree + Degree2>  operator *(const StartingPolynomial<Degree2>& p) const;
-  StartingPolynomial scale(const double& s) const;
-  StartingPolynomial shift(const double& t) const;
-  int operator <(const StartingPolynomial& sp) const;
-  static int Compare(const void* v1, const void* v2);
-  };
+  template< int Degree2 >
+  StartingPolynomial< Degree + Degree2 >  operator *(const StartingPolynomial< Degree2 > & p) const;
 
-template<int Degree>
-class PPolynomial {
+  StartingPolynomial scale(const double & s) const;
+
+  StartingPolynomial shift(const double & t) const;
+
+  int operator<(const StartingPolynomial & sp) const;
+
+  static int Compare(const void *v1, const void *v2);
+};
+
+template< int Degree >
+class PPolynomial
+{
 public:
-  size_t                      polyCount;
-  StartingPolynomial<Degree>* polys;
+  size_t polyCount;
+  StartingPolynomial< Degree > *polys;
 
   PPolynomial(void);
-  PPolynomial(const PPolynomial<Degree>& p);
+  PPolynomial(const PPolynomial< Degree > & p);
   ~PPolynomial(void);
 
-  PPolynomial& operator =(const PPolynomial& p);
+  PPolynomial & operator=(const PPolynomial & p);
 
   int size(void) const;
 
-  void set(const size_t& size);
-  // Note: this method will sort the elements in sps
-  void set(StartingPolynomial<Degree>* sps, const int& count);
-  void reset(const size_t& newSize);
+  void set(const size_t & size);
 
-  double operator ()(const double& t) const;
-  double integral(const double& tMin, const double& tMax) const;
+  // Note: this method will sort the elements in sps
+  void set(StartingPolynomial< Degree > *sps, const int & count);
+
+  void reset(const size_t & newSize);
+
+  double operator()(const double & t) const;
+
+  double integral(const double & tMin, const double & tMax) const;
+
   double Integral(void) const;
 
-  template<int Degree2>
-  PPolynomial<Degree>& operator =(const PPolynomial<Degree2>& p);
+  template< int Degree2 >
+  PPolynomial< Degree > & operator=(const PPolynomial< Degree2 > & p);
 
-  PPolynomial operator +(const PPolynomial& p) const;
-  PPolynomial operator -(const PPolynomial& p) const;
+  PPolynomial operator+(const PPolynomial & p) const;
 
-  template<int Degree2>
-  PPolynomial<Degree + Degree2> operator *(const Polynomial<Degree2>& p) const;
+  PPolynomial operator-(const PPolynomial & p) const;
 
-  template<int Degree2>
-  PPolynomial<Degree + Degree2> operator *(const PPolynomial<Degree2>& p) const;
+  template< int Degree2 >
+  PPolynomial< Degree + Degree2 > operator*(const Polynomial< Degree2 > & p) const;
 
-  PPolynomial& operator +=(const double& s);
-  PPolynomial& operator -=(const double& s);
-  PPolynomial& operator *=(const double& s);
-  PPolynomial& operator /=(const double& s);
-  PPolynomial operator +(const double& s) const;
-  PPolynomial operator -(const double& s) const;
-  PPolynomial operator *(const double& s) const;
-  PPolynomial operator /(const double& s) const;
+  template< int Degree2 >
+  PPolynomial< Degree + Degree2 > operator *(const PPolynomial< Degree2 > & p) const;
 
-  PPolynomial& addScaled(const PPolynomial& poly, const double& scale);
+  PPolynomial & operator+=(const double & s);
 
-  PPolynomial scale(const double& s) const;
-  PPolynomial shift(const double& t) const;
+  PPolynomial & operator-=(const double & s);
 
-  PPolynomial<Degree - 1> derivative(void) const;
-  PPolynomial<Degree + 1> integral(void) const;
+  PPolynomial & operator*=(const double & s);
 
-  void getSolutions(const double& c,
-                    std::vector<double>& roots,
-                    const double& EPS,
-                    const double& min = -DBL_MAX,
-                    const double& max = DBL_MAX) const;
+  PPolynomial & operator/=(const double & s);
+
+  PPolynomial operator+(const double & s) const;
+
+  PPolynomial operator-(const double & s) const;
+
+  PPolynomial operator *(const double & s) const;
+
+  PPolynomial operator/(const double & s) const;
+
+  PPolynomial & addScaled(const PPolynomial & poly, const double & scale);
+
+  PPolynomial scale(const double & s) const;
+
+  PPolynomial shift(const double & t) const;
+
+  PPolynomial< Degree - 1 > derivative(void) const;
+
+  PPolynomial< Degree + 1 > integral(void) const;
+
+  void getSolutions(const double & c,
+                    std::vector< double > & roots,
+                    const double & EPS,
+                    const double & min = -DBL_MAX,
+                    const double & max = DBL_MAX) const;
 
   void printnl(void) const;
 
-  PPolynomial<Degree + 1> MovingAverage(const double& radius);
+  PPolynomial< Degree + 1 > MovingAverage(const double & radius);
 
-  static PPolynomial ConstantFunction(const double& width = 0.5);
-  static PPolynomial GaussianApproximation(const double& width = 0.5);
-  void write(FILE* fp, const int& samples, const double& min, const double& max) const;
-  };
+  static PPolynomial ConstantFunction(const double & width = 0.5);
+
+  static PPolynomial GaussianApproximation(const double & width = 0.5);
+
+  void write(FILE *fp, const int & samples, const double & min, const double & max) const;
+};
 #include "PPolynomial.inl"
 #endif // P_POLYNOMIAL_INCLUDED
