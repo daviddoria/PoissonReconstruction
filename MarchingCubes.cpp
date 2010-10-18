@@ -894,7 +894,7 @@ int MarchingCubes::HasFaceRoots(const int& mcIndex,const int& faceIndex){
 	return (idx!=0) && (idx!=15);
 }
 int MarchingCubes::HasEdgeRoots(const int& mcIndex,const int& edgeIndex){
-	int c1,c2;
+	int c1=-1, c2=-1;
 	Cube::EdgeCorners(edgeIndex,c1,c2);
 	if(	( (mcIndex&(1<<MarchingCubes::cornerMap[c1])) &&  (mcIndex&(1<<MarchingCubes::cornerMap[c2]))) ||
 		(!(mcIndex&(1<<MarchingCubes::cornerMap[c1])) && !(mcIndex&(1<<MarchingCubes::cornerMap[c2])))){return 0;}
