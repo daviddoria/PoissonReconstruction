@@ -7,6 +7,8 @@ include(${VTK_USE_FILE})
 
 if( ${VTK_BUILD_SHARED_LIBS} )
   set( SHARED_LIBS "SHARED" )
+  add_definitions( "-DvtkPoissonReconstruction_EXPORTS" )
+  add_definitions( "-DBUILD_SHARED_LIBS" )
 else(${VTK_BUILD_SHARED_LIBS} )
   set( SHARED_LIBS "STATIC" )
 endif(${VTK_BUILD_SHARED_LIBS} )
@@ -23,7 +25,10 @@ SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY
   ${PoissonReconstruction_BINARY_DIR}/lib
 )
 
-include_directories( ${PoissonReconstruction_SOURCE_DIR}/source )
+include_directories(
+  ${PoissonReconstruction_SOURCE_DIR}/source
+  ${PoissonReconstruction_BINARY_DIR}
+)
 
 add_subdirectory(source)
 

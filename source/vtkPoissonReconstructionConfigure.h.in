@@ -1,0 +1,21 @@
+#ifndef __vtkPoissonReconstructionConfigure_h
+#define __vtkPoissonReconstructionConfigure_h
+
+#include "vtkConfigure.h"
+
+/* Whether we are building shared libraries.  */
+#if defined ( WIN32 ) && defined ( BUILD_SHARED_LIBS )
+
+ #if defined ( vtkPoissonReconstruction_EXPORTS )
+  #define vtkPoissonReconstruction_EXPORT __declspec(dllexport)
+ #else
+  #define vtkPoissonReconstruction_EXPORT __declspec(dllimport)
+ #endif
+
+#else
+
+  #define vtkPoissonReconstruction_EXPORT
+
+#endif
+
+#endif
