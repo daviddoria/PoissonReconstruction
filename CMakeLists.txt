@@ -27,6 +27,7 @@ include_directories( ${PoissonReconstruction_SOURCE_DIR}/source )
 
 add_subdirectory(source)
 
+include( CTest )
 add_subdirectory(example)
 
 set(BUILD_PARAVIEW_PLUGIN OFF CACHE BOOL "Build Paraview plugin?")
@@ -41,4 +42,3 @@ if( BUILD_DOCUMENTATION )
   add_subdirectory( documentation )
 endif( BUILD_DOCUMENTATION )
 
-include( CTest )
