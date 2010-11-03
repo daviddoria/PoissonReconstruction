@@ -1,11 +1,16 @@
-FIND_PACKAGE(ParaView REQUIRED)
-INCLUDE(${PARAVIEW_USE_FILE})
+find_package(ParaView REQUIRED)
+include(${PARAVIEW_USE_FILE})
 
-INCLUDE_DIRECTORIES(${INCLUDE_DIRECTORIES} ../)
+include_directories(
+  ${INCLUDE_DIRECTORIES}
+  ${PoissonReconstruction_SOURCE_DIR}/source
+)
 
-ADD_PARAVIEW_PLUGIN(PoissonReconstructionPlugin "1.0"
-  SERVER_MANAGER_XML ../vtkPoissonReconstruction.xml
-SERVER_MANAGER_SOURCES ../vtkPoissonReconstruction.cxx  
-SERVER_SOURCES ../Factor.cpp ../Geometry.cpp ../MarchingCubes.cpp ../MultiGridOctest.cpp ../MultiGridOctreeData.cpp 
+add_paraview_plugin(PoissonReconstructionPlugin "1.0"
+  SERVER_MANAGER_XML vtkPoissonReconstruction.xml
+  SERVER_MANAGER_SOURCES ../vtkPoissonReconstruction.cxx
+  SERVER_SOURCES  ../source/Factor.cpp ../source/Geometry.cpp
+                  ../source/MarchingCubes.cpp ../source/MultiGridOctest.cpp
+                  ../source/MultiGridOctreeData.cpp
 )
 
