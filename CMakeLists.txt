@@ -5,13 +5,13 @@ project(PoissonReconstruction)
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
-if( ${VTK_BUILD_SHARED_LIBS} )
+if( ${VTK_BUILD_SHARED_LIBS} MATCHES ON )
   set( SHARED_LIBS "SHARED" )
   add_definitions( "-DvtkPoissonReconstruction_EXPORTS" )
   add_definitions( "-DBUILD_SHARED_LIBS" )
-else(${VTK_BUILD_SHARED_LIBS} )
+else(${VTK_BUILD_SHARED_LIBS} MATCHES ON )
   set( SHARED_LIBS "STATIC" )
-endif(${VTK_BUILD_SHARED_LIBS} )
+endif(${VTK_BUILD_SHARED_LIBS} MATCHES ON )
 
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY
   ${PoissonReconstruction_BINARY_DIR}/bin
