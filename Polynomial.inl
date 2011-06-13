@@ -215,7 +215,7 @@ Polynomial<Degree> Polynomial<Degree>::operator * (const double& s) const{
 }
 template<int Degree>
 Polynomial<Degree> Polynomial<Degree>::operator / (const double& s) const{
-	Polynomial q(this->degree());
+	Polynomial q(degree());
 	for(int i=0;i<=Degree;i++){q.coefficients[i]=coefficients[i]/s;}
 	return q;
 }

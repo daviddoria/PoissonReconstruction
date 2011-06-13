@@ -594,7 +594,7 @@ int Octree<Degree>::LaplacianMatrixIteration(const int& subdivideDepth){
 		if(subdivideDepth>0){iter+=SolveFixedDepthMatrix(i,subdivideDepth,sNodes);}
 		else{iter+=SolveFixedDepthMatrix(i,sNodes);}
 	}
-	SparseMatrix<float>::MatrixAllocator.reset();
+	SparseMatrix<float>::Allocator.reset();
 	fData.clearDotTables(fData.DOT_FLAG | fData.D_DOT_FLAG | fData.D2_DOT_FLAG);
 	return iter;
 }
@@ -613,7 +613,7 @@ int Octree<Degree>::SolveFixedDepthMatrix(const int& depth,const SortedTreeNodes
 	gTime=Time();
 	V.Resize(sNodes.nodeCount[depth+1]-sNodes.nodeCount[depth]);
 	for(i=sNodes.nodeCount[depth];i<sNodes.nodeCount[depth+1];i++){V[i-sNodes.nodeCount[depth]]=sNodes.treeNodes[i]->nodeData.value;}
-	SparseSymmetricMatrix<float>::MatrixAllocator.rollBack();
+	SparseSymmetricMatrix<float>::Allocator.rollBack();
 	GetFixedDepthLaplacian(matrix,depth,sNodes);
 	gTime=Time()-gTime;
 	DumpOutput("\tMatrix entries: %d / %d^2 = %.4f%%\n",matrix.Entries(),matrix.rows,100.0*(matrix.Entries()/double(matrix.rows))/matrix.rows);
@@ -754,7 +754,7 @@ int Octree<Degree>::SolveFixedDepthMatrix(const int& depth,const int& startingDe
 		SubSolution.Resize(asf.adjacencyCount);
 		for(j=0;j<asf.adjacencyCount;j++){SubSolution[j]=sNodes.treeNodes[asf.adjacencies[j]]->nodeData.value;}
 		// Get the associated matrix
-		SparseSymmetricMatrix<float>::MatrixAllocator.rollBack();
+		SparseSymmetricMatrix<float>::Allocator.rollBack();
 		GetRestrictedFixedDepthLaplacian(matrix,depth,asf.adjacencies,asf.adjacencyCount,sNodes.treeNodes[i],myRadius,sNodes);
 		gTime=Time()-gTime;
 		DumpOutput("\t\tMatrix entries: %d / %d^2 = %.4f%%\n",matrix.Entries(),matrix.rows,100.0*(matrix.Entries()/double(matrix.rows))/matrix.rows);
@@ -1051,7 +1051,7 @@ int Octree<Degree>::RestrictedLaplacianMatrixFunction::Function(const TreeOctNod
 }
 
 template<int Degree>
-void Octree<Degree>::GetMCIsoTriangles(const Real& isoValue,CoredMeshData* mesh,const int& fullDepthIso,const int& nonLinearFit){
+void Octree<Degree>::GetMCIsoTriangles(const Real& isoValue,CoredMeshData* mesh,const int& fullDepthIso,const int& nonLinearFit , bool addBarycenter ){
 	double t;
 	TreeOctNode* temp;
 
@@ -1086,14 +1086,15 @@ void Octree<Degree>::GetMCIsoTriangles(const Real& isoValue,CoredMeshData* mesh,
 	// finer faces to coarser ones.
 	temp=tree.nextLeaf();
 	while(temp){
-		GetMCIsoTriangles(temp,mesh,roots,NULL,NULL,0,0);
+		GetMCIsoTriangles(temp,mesh,roots,NULL,NULL,0,0 , addBarycenter );
 		temp=tree.nextLeaf(temp);
 	}
 	DumpOutput("Added triangles in: %f\n",Time()-t);
 	DumpOutput("Memory Usage: %.3f MB\n",float(MemoryUsage()));
 }
 template<int Degree>
-void Octree<Degree>::GetMCIsoTriangles(const Real& isoValue,const int& subdivideDepth,CoredMeshData* mesh,const int& fullDepthIso,const int& nonLinearFit){
+void Octree<Degree>::GetMCIsoTriangles(const Real& isoValue,const int& subdivideDepth,CoredMeshData* mesh,const int& fullDepthIso,const int& nonLinearFit , bool addBarycenter )
+{
 	TreeOctNode* temp;
 	hash_map<long long,int> boundaryRoots,*interiorRoots;
 	hash_map<long long,std::pair<Real,Point3D<Real> > > *boundaryNormalHash,*interiorNormalHash;
@@ -1133,7 +1134,7 @@ void Octree<Degree>::GetMCIsoTriangles(const Real& isoValue,const int& subdivide
 
 		temp=sNodes.treeNodes[i]->nextLeaf();
 		while(temp){
-			GetMCIsoTriangles(temp,mesh,boundaryRoots,interiorRoots,interiorPoints,offSet,sDepth);
+			GetMCIsoTriangles(temp,mesh,boundaryRoots,interiorRoots,interiorPoints,offSet,sDepth , addBarycenter );
 			temp=sNodes.treeNodes[i]->nextLeaf(temp);
 		}
 		delete interiorRoots;
@@ -1144,7 +1145,7 @@ void Octree<Degree>::GetMCIsoTriangles(const Real& isoValue,const int& subdivide
 
 	temp=tree.nextLeaf();
 	while(temp){
-		if(temp->depth()<sDepth){GetMCIsoTriangles(temp,mesh,boundaryRoots,NULL,NULL,0,0);}
+		if(temp->depth()<sDepth){GetMCIsoTriangles(temp,mesh,boundaryRoots,NULL,NULL,0,0 , addBarycenter );}
 		temp=tree.nextLeaf(temp);
 	}
 }
@@ -1788,8 +1789,12 @@ int Octree<Degree>::GetRoot(const RootInfo& ri,const Real& isoValue,Point3D<Real
 		cnf.value=0;
 		cnf.normal.coords[0]=cnf.normal.coords[1]=cnf.normal.coords[2]=0;
 		// Careful here as the normal isn't quite accurate... (i.e. postNormalSmooth is ignored)
+#if 0
 		if(this->width<=3){getCornerValueAndNormal(ri.node,c1,cnf.value,cnf.normal);}
 		else{TreeOctNode::ProcessPointAdjacentNodes(fData.depth,idx,&tree,this->width,&cnf);}
+#else
+		TreeOctNode::ProcessPointAdjacentNodes(fData.depth,idx,&tree,this->width,&cnf);
+#endif
 		normalHash[key]=std::pair<Real,Point3D<Real> >(cnf.value,cnf.normal);
 	}
 	x0=normalHash[key].first;
@@ -1802,8 +1807,12 @@ int Octree<Degree>::GetRoot(const RootInfo& ri,const Real& isoValue,Point3D<Real
 	if(normalHash.find(key)==normalHash.end()){
 		cnf.value=0;
 		cnf.normal.coords[0]=cnf.normal.coords[1]=cnf.normal.coords[2]=0;
+#if 0
 		if(this->width<=3){getCornerValueAndNormal(ri.node,c2,cnf.value,cnf.normal);}
 		else{TreeOctNode::ProcessPointAdjacentNodes(fData.depth,idx,&tree,this->width,&cnf);}
+#else
+		TreeOctNode::ProcessPointAdjacentNodes(fData.depth,idx,&tree,this->width,&cnf);
+#endif
 		normalHash[key]=std::pair<Real,Point3D<Real> >(cnf.value,cnf.normal);
 	}
 	x1=normalHash[key].first;
@@ -2200,7 +2209,7 @@ void Octree<Degree>::GetMCIsoEdges(TreeOctNode* node,hash_map<long long,int>& bo
 }
 template<int Degree>
 int Octree<Degree>::GetMCIsoTriangles(TreeOctNode* node,CoredMeshData* mesh,hash_map<long long,int>& boundaryRoots,
-									  hash_map<long long,int>* interiorRoots,std::vector<Point3D<float> >* interiorPositions,const int& offSet,const int& sDepth)
+									  hash_map<long long,int>* interiorRoots,std::vector<Point3D<float> >* interiorPositions,const int& offSet,const int& sDepth , bool addBarycenter )
 {
 	int tris=0;
 	std::vector<std::pair<long long,long long> > edges;
@@ -2215,7 +2224,7 @@ int Octree<Degree>::GetMCIsoTriangles(TreeOctNode* node,CoredMeshData* mesh,hash
 			if(!GetRootIndex(edgeLoops[i][j].first,boundaryRoots,interiorRoots,p)){printf("Bad Point Index\n");}
 			else{edgeIndices.push_back(p);}
 		}
-		tris+=AddTriangles(mesh,edgeIndices,interiorPositions,offSet);
+		tris+=AddTriangles(mesh,edgeIndices,interiorPositions,offSet , addBarycenter );
 	}
 	return tris;
 }
@@ -2269,41 +2278,90 @@ int Octree<Degree>::AddTriangles(CoredMeshData* mesh,std::vector<CoredPointIndex
 	return AddTriangles(mesh,e,interiorPositions,offSet);
 }
 template<int Degree>
-int Octree<Degree>::AddTriangles(CoredMeshData* mesh,std::vector<CoredPointIndex>& edges,std::vector<Point3D<float> >* interiorPositions,const int& offSet){
-	if(edges.size()>3){
-		Triangulation<float> t;
+int Octree<Degree>::AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIndex>& edges , std::vector<Point3D<float> >* interiorPositions , const int& offSet , bool addBarycenter )
+{
+	if( edges.size()>3 )
+	{
+#if 1
+		bool isCoplanar = false;
 
-		// Add the points to the triangulation
-		for(int i=0;i<int(edges.size());i++){
-			Point3D<Real> p;
-			if(edges[i].inCore)	{for(int j=0;j<3;j++){p.coords[j]=mesh->inCorePoints[edges[i].index].coords[j];}}
-			else				{for(int j=0;j<3;j++){p.coords[j]=(*interiorPositions)[edges[i].index-offSet].coords[j];}}
-			t.points.push_back(p);
-		}
-
-		// Create a fan triangulation
-		for(int i=1;i<int(edges.size())-1;i++){t.addTriangle(0,i,i+1);}
-
-		// Minimize
-		while(1){
-			int i;
-			for(i=0;i<int(t.edges.size());i++){if(t.flipMinimize(i)){break;}}
-			if(i==t.edges.size()){break;}
-		}
-		// Add the triangles to the mesh
-		for(int i=0;i<int(t.triangles.size());i++){
-			TriangleIndex tri;
-			int idx[3];
-			int inCoreFlag=0;
-			t.factor(i,idx[0],idx[1],idx[2]);
-			for(int j=0;j<3;j++){
-				tri.idx[j]=edges[idx[j]].index;
-				if(edges[idx[j]].inCore){inCoreFlag|=CoredMeshData::IN_CORE_FLAG[j];}
+		for( int i=0 ; i<edges.size() ; i++ )
+			for( int j=0 ; j<i ; j++ )
+				if( (i+1)%edges.size()!=j && (j+1)%edges.size()!=i )
+				{
+					Point3D< Real > v1 , v2;
+					if( edges[i].inCore ) for( int k=0 ; k<3 ; k++ ) v1.coords[k] =   mesh->inCorePoints[ edges[i].index        ].coords[k];
+					else                  for( int k=0 ; k<3 ; k++ ) v1.coords[k] = (*interiorPositions)[ edges[i].index-offSet ].coords[k];
+					if( edges[j].inCore ) for( int k=0 ; k<3 ; k++ ) v2.coords[k] =   mesh->inCorePoints[ edges[j].index        ].coords[k];
+					else                  for( int k=0 ; k<3 ; k++ ) v2.coords[k] = (*interiorPositions)[ edges[j].index-offSet ].coords[k];
+					for( int k=0 ; k<3 ; k++ ) if( v1.coords[k]==v2.coords[k] ) isCoplanar = true;
+				}
+		if( addBarycenter && isCoplanar )
+#else
+		if( addBarycenter )
+#endif
+		{
+			Point3D< Real > c;
+			c.coords[0] = c.coords[1] = c.coords[2] = 0;
+			for( int i=0 ; i<int(edges.size()) ; i++ )
+			{
+				Point3D<Real> p;
+				if(edges[i].inCore)	for(int j=0 ; j<3 ; j++ ) p.coords[j] =  mesh->inCorePoints[edges[i].index].coords[j];
+				else				for(int j=0 ; j<3 ; j++ ) p.coords[j] =(*interiorPositions)[edges[i].index-offSet].coords[j];
+				c.coords[0] += p.coords[0] , c.coords[1] += p.coords[1] , c.coords[2] += p.coords[2];
 			}
-			mesh->addTriangle(tri,inCoreFlag);
+			c.coords[0] /= edges.size() , c.coords[1] /= edges.size() , c.coords[2] /= edges.size();
+			int cIdx = mesh->addOutOfCorePoint( c );
+			for( int i=0 ; i<int(edges.size()) ; i++ )
+			{
+				int inCoreFlag=0;
+				TriangleIndex tri;
+				tri.idx[0] = edges[i].index;
+				tri.idx[1] = edges[(i+1)%edges.size()].index;
+				tri.idx[2] = cIdx;
+				if( edges[i                 ].inCore ) inCoreFlag |= CoredMeshData::IN_CORE_FLAG[0];
+				if( edges[(i+1)%edges.size()].inCore ) inCoreFlag |= CoredMeshData::IN_CORE_FLAG[1];
+				mesh->addTriangle( tri , inCoreFlag );
+			}
+			return edges.size();
+		}
+		else
+		{
+			Triangulation<float> t;
+
+			// Add the points to the triangulation
+			for(int i=0;i<int(edges.size());i++){
+				Point3D<Real> p;
+				if(edges[i].inCore)	{for(int j=0;j<3;j++){p.coords[j]=mesh->inCorePoints[edges[i].index].coords[j];}}
+				else				{for(int j=0;j<3;j++){p.coords[j]=(*interiorPositions)[edges[i].index-offSet].coords[j];}}
+				t.points.push_back(p);
+			}
+
+			// Create a fan triangulation
+			for(int i=1;i<int(edges.size())-1;i++){t.addTriangle(0,i,i+1);}
+
+			// Minimize
+			while(1){
+				int i;
+				for(i=0;i<int(t.edges.size());i++){if(t.flipMinimize(i)){break;}}
+				if(i==t.edges.size()){break;}
+			}
+			// Add the triangles to the mesh
+			for(int i=0;i<int(t.triangles.size());i++){
+				TriangleIndex tri;
+				int idx[3];
+				int inCoreFlag=0;
+				t.factor(i,idx[0],idx[1],idx[2]);
+				for(int j=0;j<3;j++){
+					tri.idx[j]=edges[idx[j]].index;
+					if(edges[idx[j]].inCore){inCoreFlag|=CoredMeshData::IN_CORE_FLAG[j];}
+				}
+				mesh->addTriangle(tri,inCoreFlag);
+			}
 		}
 	}
-	else if(edges.size()==3){
+	else if( edges.size()==3 )
+	{
 		TriangleIndex tri;
 		int inCoreFlag=0;
 		for(int i=0;i<3;i++){

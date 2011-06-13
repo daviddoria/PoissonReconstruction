@@ -199,12 +199,12 @@ class Octree{
 		CoredMeshData* mesh,const int& nonLinearFit);
 
 	int GetMCIsoTriangles(TreeOctNode* node,CoredMeshData* mesh,hash_map<long long,int>& boundaryRoots,
-		hash_map<long long,int>* interiorRoots,std::vector<Point3D<float> >* interiorPositions,const int& offSet,const int& sDepth);
+		hash_map<long long,int>* interiorRoots,std::vector<Point3D<float> >* interiorPositions,const int& offSet,const int& sDepth , bool addBarycenter );
 
-	static int AddTriangles(CoredMeshData* mesh,std::vector<CoredPointIndex> edges[3],std::vector<Point3D<float> >* interiorPositions,const int& offSet);
-	static int AddTriangles(CoredMeshData* mesh,std::vector<CoredPointIndex>& edges,std::vector<Point3D<float> >* interiorPositions,const int& offSet);
+	static int AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIndex> edges[3] , std::vector<Point3D<float> >* interiorPositions , const int& offSet );
+	static int AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIndex>& edges , std::vector<Point3D<float> >* interiorPositions , const int& offSet , bool addBarycenter );
 	void GetMCIsoEdges(TreeOctNode* node,hash_map<long long,int>& boundaryRoots,hash_map<long long,int>* interiorRoots,const int& sDepth,
-		std::vector<std::pair<long long,long long> >& edges);
+		std::vector<std::pair<long long,long long> >& edges );
 	static int GetEdgeLoops(std::vector<std::pair<long long,long long> >& edges,std::vector<std::vector<std::pair<long long,long long> > >& loops);
 	static int InteriorFaceRootCount(const TreeOctNode* node,const int &faceIndex,const int& maxDepth);
 	static int EdgeRootCount(const TreeOctNode* node,const int& edgeIndex,const int& maxDepth);
@@ -247,8 +247,8 @@ public:
 	int LaplacianMatrixIteration(const int& subdivideDepth);
 
 	Real GetIsoValue(void);
-	void GetMCIsoTriangles(const Real& isoValue,CoredMeshData* mesh,const int& fullDepthIso=0,const int& nonLinearFit=1);
-	void GetMCIsoTriangles(const Real& isoValue,const int& subdivideDepth,CoredMeshData* mesh,const int& fullDepthIso=0,const int& nonLinearFit=1);
+	void GetMCIsoTriangles(const Real& isoValue,CoredMeshData* mesh,const int& fullDepthIso=0,const int& nonLinearFit=1 , bool addBarycenter=false );
+	void GetMCIsoTriangles(const Real& isoValue,const int& subdivideDepth,CoredMeshData* mesh,const int& fullDepthIso=0,const int& nonLinearFit=1 , bool addBarycenter=false );
 };
 
 #include "MultiGridOctreeData.inl"

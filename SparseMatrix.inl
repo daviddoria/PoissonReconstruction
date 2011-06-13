@@ -27,8 +27,7 @@ DAMAGE.
 */
 
 #include <float.h>
-#include <cstdio>
-#include <cstring>
+
 
 ///////////////////
 //  SparseMatrix //
@@ -37,13 +36,13 @@ DAMAGE.
 // Static Allocator Methods and Memebers //
 ///////////////////////////////////////////
 template<class T> int SparseMatrix<T>::UseAlloc=0;
-template<class T> Allocator<MatrixEntry<T> > SparseMatrix<T>::MatrixAllocator;
+template<class T> Allocator<MatrixEntry<T> > SparseMatrix<T>::Allocator;
 template<class T> int SparseMatrix<T>::UseAllocator(void){return UseAlloc;}
 template<class T>
 void SparseMatrix<T>::SetAllocator(const int& blockSize){
 	if(blockSize>0){
 		UseAlloc=1;
-		MatrixAllocator.set(blockSize);
+		Allocator.set(blockSize);
 	}
 	else{UseAlloc=0;}
 }
@@ -111,7 +110,7 @@ void SparseMatrix<T>::Resize( int r )
 template<class T>
 void SparseMatrix<T>::SetRowSize(int row,int count){
 	if(row>=0 && row<rows){
-		if(UseAlloc){m_ppElements[row]=this->MatrixAllocator.newElements(count);}
+		if(UseAlloc){m_ppElements[row]=Allocator.newElements(count);}
 		else{
 			if(rowSizes[row]){free(m_ppElements[row]);}
 			if(count>0){m_ppElements[row]=(MatrixEntry<T>*)malloc(sizeof(MatrixEntry<T>)*count);}
@@ -212,9 +211,9 @@ Vector<T2> SparseMatrix<T>::operator * (const Vector<T2>& V) const
 template<class T>
 SparseMatrix<T> SparseMatrix<T>::Transpose() const
 {
-	SparseMatrix<T> M( this->Columns(), this->Rows() );
+	SparseMatrix<T> M( Columns(), Rows() );
 
-	for (int i=0; i<this->Rows(); i++)
+	for (int i=0; i<Rows(); i++)
 	{
 		for(int ii=0;ii<m_ppElements[i].size();ii++){
 			M(m_ppElements[i][ii].N,i) = m_ppElements[i][ii].Value;
@@ -295,13 +294,13 @@ int SparseMatrix<T>::Solve(const SparseMatrix<T>& M,const Vector<T>& b,const int
 // Static Allocator Methods and Memebers //
 ///////////////////////////////////////////
 template<class T,int Dim> int SparseNMatrix<T,Dim>::UseAlloc=0;
-template<class T,int Dim> Allocator<NMatrixEntry<T,Dim> > SparseNMatrix<T,Dim>::NMatrixAllocator;
+template<class T,int Dim> Allocator<NMatrixEntry<T,Dim> > SparseNMatrix<T,Dim>::Allocator;
 template<class T,int Dim> int SparseNMatrix<T,Dim>::UseAllocator(void){return UseAlloc;}
 template<class T,int Dim>
 void SparseNMatrix<T,Dim>::SetAllocator(const int& blockSize){
 	if(blockSize>0){
 		UseAlloc=1;
-		NMatrixAllocator.set(blockSize);
+		Allocator.set(blockSize);
 	}
 	else{UseAlloc=0;}
 }
@@ -369,7 +368,7 @@ void SparseNMatrix<T,Dim>::Resize( int r )
 template<class T,int Dim>
 void SparseNMatrix<T,Dim>::SetRowSize(int row,int count){
 	if(row>=0 && row<rows){
-		if(UseAlloc){m_ppElements[row]=this->NMatrixAllocator.newElements(count);}
+		if(UseAlloc){m_ppElements[row]=Allocator.newElements(count);}
 		else{
 			if(rowSizes[row]){free(m_ppElements[row]);}
 			if(count>0){m_ppElements[row]=(NMatrixEntry<T,Dim>*)malloc(sizeof(NMatrixEntry<T,Dim>)*count);}
@@ -389,7 +388,7 @@ SparseNMatrix<T,Dim> SparseNMatrix<T,Dim>::operator * (const T& V) const
 template<class T,int Dim>
 SparseNMatrix<T,Dim>& SparseNMatrix<T,Dim>::operator *= (const T& V)
 {
-	for (int i=0; i<this->Rows(); i++)
+	for (int i=0; i<Rows(); i++)
 	{
 		for(int ii=0;ii<m_ppElements[i].size();i++){
 			for(int jj=0;jj<Dim;jj++){

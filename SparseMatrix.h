@@ -54,7 +54,7 @@ template<class T> class SparseMatrix
 private:
 	static int UseAlloc;
 public:
-	static Allocator<MatrixEntry<T> > MatrixAllocator;
+	static Allocator<MatrixEntry<T> > Allocator;
 	static int UseAllocator(void);
 	static void SetAllocator(const int& blockSize);
 
@@ -105,7 +105,7 @@ template<class T,int Dim> class SparseNMatrix
 private:
 	static int UseAlloc;
 public:
-	static Allocator<NMatrixEntry<T,Dim> > NMatrixAllocator;
+	static Allocator<NMatrixEntry<T,Dim> > Allocator;
 	static int UseAllocator(void);
 	static void SetAllocator(const int& blockSize);
 

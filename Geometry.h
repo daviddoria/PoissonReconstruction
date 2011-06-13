@@ -180,9 +180,9 @@ class CoredVectorMeshData : public CoredMeshData{
 	std::vector<TriangleIndex> triangles;
 	int oocPointIndex,triangleIndex;
 public:
-	CoredVectorMeshData();
+	CoredVectorMeshData::CoredVectorMeshData(void);
 
-	void resetIterator();
+	void resetIterator(void);
 
 	int addOutOfCorePoint(const Point3D<float>& p);
 	int addTriangle(const TriangleIndex& t,const int& inCoreFlag=(CoredMeshData::IN_CORE_FLAG[0] | CoredMeshData::IN_CORE_FLAG[1] | CoredMeshData::IN_CORE_FLAG[2]));

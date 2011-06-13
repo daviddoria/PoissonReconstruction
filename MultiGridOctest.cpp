@@ -118,6 +118,11 @@ void ShowUsage(char* ex)
 	printf("\t\t used as a confidence value, affecting the sample's\n");
 	printf("\t\t constribution to the reconstruction process.\n");
 
+	printf("\t[--manifold]\n");
+	printf("\t\t If this flag is enabled, the isosurface extraction is performed\n");
+	printf("\t\t by adding a polygon's barycenter in order to ensure that the output\n");
+	printf("\t\t mesh is manifold.\n");
+
 	printf("\t[--verbose]\n");
 }
 template<int Degree>
@@ -125,7 +130,7 @@ int Execute(int argc,char* argv[])
 {
 	int i;
 	cmdLineString In,Out;
-	cmdLineReadable Binary,Verbose,NoResetSamples,NoClipTree,Confidence;
+	cmdLineReadable Binary,Verbose,NoResetSamples,NoClipTree,Confidence,Manifold;
 	cmdLineInt Depth(8),SolverDivide(8),IsoDivide(8),Refine(3);
 	cmdLineInt KernelDepth;
 	cmdLineFloat SamplesPerNode(1.0f),Scale(1.25f);
@@ -133,13 +138,13 @@ int Execute(int argc,char* argv[])
 	{
 		"in","depth","out","refine","noResetSamples","noClipTree",
 		"binary","solverDivide","isoDivide","scale","verbose",
-		"kernelDepth","samplesPerNode","confidence"
+		"kernelDepth","samplesPerNode","confidence","manifold"
 	};
 	cmdLineReadable* params[]=
 	{
 		&In,&Depth,&Out,&Refine,&NoResetSamples,&NoClipTree,
 		&Binary,&SolverDivide,&IsoDivide,&Scale,&Verbose,
-		&KernelDepth,&SamplesPerNode,&Confidence
+		&KernelDepth,&SamplesPerNode,&Confidence,&Manifold
 	};
 	int paramNum=sizeof(paramNames)/sizeof(char*);
 	int commentNum=0;
@@ -169,12 +174,17 @@ int Execute(int argc,char* argv[])
 	if(NoResetSamples.set)	{DumpOutput2(comments[commentNum++],"\t--noResetSamples\n");}
 	if(NoClipTree.set)		{DumpOutput2(comments[commentNum++],"\t--noClipTree\n");}
 	if(Confidence.set)		{DumpOutput2(comments[commentNum++],"\t--confidence\n");}
+	if(Manifold.set)		{DumpOutput2(comments[commentNum++],"\t--manifold\n");}
 
 	double t;
 	double tt=Time();
 	Point3D<float> center;
 	Real scale=1.0;
 	Real isoValue=0;
+	//////////////////////////////////
+	// Fix courtesy of David Gallup //
+	TreeNodeData::UseIndex = 1;     //
+	//////////////////////////////////
 	Octree<Degree> tree;
 	PPolynomial<Degree> ReconstructionFunction=PPolynomial<Degree>::GaussianApproximation();
 
@@ -257,8 +267,8 @@ else{
 	DumpOutput("Memory Usage: %.3f MB\n",float(tree.MemoryUsage()));
 
 	t=Time();
-	if(IsoDivide.value){tree.GetMCIsoTriangles(isoValue,IsoDivide.value,&mesh);}
-	else{tree.GetMCIsoTriangles(isoValue,&mesh);}
+	if(IsoDivide.value) tree.GetMCIsoTriangles( isoValue , IsoDivide.value , &mesh , 0 , 1 , Manifold.set );
+	else                tree.GetMCIsoTriangles( isoValue ,                   &mesh , 0 , 1 , Manifold.set );
 	DumpOutput2(comments[commentNum++],"#        Got Triangles in: %9.1f (s), %9.1f (MB)\n",Time()-t,tree.maxMemoryUsage);
 	DumpOutput2(comments[commentNum++],"#              Total Time: %9.1f (s)\n",Time()-tt);
 	PlyWriteTriangles(Out.value,&mesh,PLY_BINARY_NATIVE,center,scale,comments,commentNum);
