@@ -127,6 +127,11 @@ void ShowUsage(char* ex)
 	printf("\t\t used as a confidence value, affecting the sample's\n");
 	printf("\t\t constribution to the reconstruction process.\n");
 
+	printf("\t[--manifold]\n");
+	printf("\t\t If this flag is enabled, the isosurface extraction is performed\n");
+	printf("\t\t by adding a polygon's barycenter in order to ensure that the output\n");
+	printf("\t\t mesh is manifold.\n");
+
 	printf("\t[--verbose]\n");
 }
 

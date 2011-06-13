@@ -279,7 +279,8 @@ public:
                         hash_map< long long, int > *interiorRoots,
                         std::vector< Point3D< float > > *interiorPositions,
                         const int & offSet,
-                        const int & sDepth);
+                        const int & sDepth,
+                        bool addBarycenter);
 
   static int AddTriangles(CoredMeshData *mesh,
                           std::vector< CoredPointIndex > edges[3],
@@ -289,7 +290,8 @@ public:
   static int AddTriangles(CoredMeshData *mesh,
                           std::vector< CoredPointIndex > & edges,
                           std::vector< Point3D< float > > *interiorPositions,
-                          const int & offSet);
+                          const int & offSet,
+                          bool addBarycenter);
 
   void GetMCIsoEdges(TreeOctNode *node,
                      hash_map< long long, int > & boundaryRoots,
@@ -401,13 +403,15 @@ public:
   void GetMCIsoTriangles(const Real & isoValue,
                          CoredMeshData *mesh,
                          const int & fullDepthIso = 0,
-                         const int & nonLinearFit = 1);
+                         const int & nonLinearFit = 1,
+                         bool addBarycenter=false);
 
   void GetMCIsoTriangles(const Real & isoValue,
                          const int & subdivideDepth,
                          CoredMeshData *mesh,
                          const int & fullDepthIso = 0,
-                         const int & nonLinearFit = 1);
+                         const int & nonLinearFit = 1,
+                         bool addBarycenter=false);
 };
 
 #include "MultiGridOctreeData.inl"
