@@ -44,9 +44,7 @@
 
 #include "MultiGridOctest.h"
 #include "MultiGridOctreeData.h"
-//#include "MemoryUsage.h"
 
-vtkCxxRevisionMacro(vtkPoissonReconstruction, "$Revision: 1.70 $");
 vtkStandardNewMacro(vtkPoissonReconstruction);
 
 vtkPoissonReconstruction::vtkPoissonReconstruction()
