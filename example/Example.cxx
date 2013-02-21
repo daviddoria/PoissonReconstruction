@@ -48,8 +48,8 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
     }
 
-  vtkstd::string inputFileName = argv[1];  //"horsePoints.vtp";
-  vtkstd::string outputFileName = argv[3]; //"horse.vtp";
+  std::string inputFileName = argv[1];  //"horsePoints.vtp";
+  std::string outputFileName = argv[3]; //"horse.vtp";
   int            depth = atoi(argv[2]);
 
   vtkSmartPointer< vtkXMLPolyDataReader > reader =
