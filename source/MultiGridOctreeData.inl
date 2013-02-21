@@ -1648,13 +1648,12 @@ inline Real Octree<Degree>::GetIsoValue(void)
 	else{
 		const TreeOctNode* temp;
 		Real isoValue,weightSum,w;
-		Real myRadius;
 		PointIndexValueFunction cf;
 
 		fData.setValueTables(fData.VALUE_FLAG,0);
 		cf.valueTables=fData.valueTables;
 		cf.res2=fData.res2;
-		myRadius=radius;
+		Real myRadius=radius;
 		isoValue=weightSum=0;
 		temp=tree.nextNode();
 		while(temp){
@@ -2671,8 +2670,8 @@ int Octree<Degree>::AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIn
 #if 1
           bool isCoplanar = false;
 
-          for( int i=0 ; i<edges.size() ; i++ )
-            for( int j=0 ; j<i ; j++ )
+          for( size_t i=0 ; i<edges.size() ; i++ )
+            for( size_t j=0 ; j<i ; j++ )
               if( (i+1)%edges.size()!=j && (j+1)%edges.size()!=i )
               {
                 Point3D< Real > v1 , v2;

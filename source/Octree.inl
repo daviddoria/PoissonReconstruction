@@ -716,7 +716,7 @@ OctNode<NodeData,Real>* OctNode<NodeData,Real>::getNearestLeaf(const Point3D<Rea
 	while(temp->children){
 		cIndex=CornerIndex(center,p);
 		temp=&temp->children[cIndex];
-		width/=2;
+		this->width/=2;
 		if(cIndex&1){center.coords[0]+=twidth/2;}
 		else		{center.coords[0]-=twidth/2;}
 		if(cIndex&2){center.coords[1]+=twidth/2;}
@@ -790,7 +790,7 @@ OctNode<NodeData,Real>& OctNode<NodeData,Real>::operator = (const OctNode<NodeDa
 	if(children){delete[] children;}
 	children=NULL;
 
-	depth=node.depth;
+	this->depth=node.depth;
 	for(i=0;i<DIMENSION;i++){this->offset[i] = node.offset[i];}
 	if(node.children){
 		initChildren();

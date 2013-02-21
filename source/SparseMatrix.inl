@@ -431,7 +431,7 @@ Vector<T2> SparseNMatrix<T,Dim>::operator * (const NVector<T2,Dim>& V) const
 	
 	for (int i=0; i<rows; i++)
 	{
-		T2 temp();
+		T2 temp;
 		for(int ii=0;ii<rowSizes[i];ii++){
 			for(int jj=0;jj<Dim;jj++){temp+=m_ppElements[i][ii].Value[jj]*V.m_pV[m_ppElements[i][ii].N][jj];}
 		}
