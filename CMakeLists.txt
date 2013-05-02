@@ -15,14 +15,17 @@ endif(${VTK_BUILD_SHARED_LIBS} MATCHES ON )
 
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY
   ${PoissonReconstruction_BINARY_DIR}/bin
+  CACHE PATH "path for all executables"
 )
 
 set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY
   ${PoissonReconstruction_BINARY_DIR}/lib
+  CACHE PATH "path for all libraries"
 )
 
 SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY
   ${PoissonReconstruction_BINARY_DIR}/lib
+  CACHE PATH "path for all libraries"
 )
 
 include_directories(
