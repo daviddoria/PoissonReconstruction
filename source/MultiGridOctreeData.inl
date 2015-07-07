@@ -402,8 +402,7 @@ inline int Octree<Degree>::setTree(vtkSmartPointer<vtkPolyData> data,const int& 
 							const int& resetSamples,const int& useConfidence)
 {
 
-   vtkSmartPointer<vtkFloatArray> dataNormals =
-      vtkFloatArray::SafeDownCast(data->GetPointData()->GetNormals("Normals"));
+  vtkDataArray* dataNormals = data->GetPointData()->GetNormals();
   if(!dataNormals)
     {
     //vtkErrorMacro("The data set does not contain normals!");
