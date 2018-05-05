@@ -283,11 +283,6 @@ public:
                         bool addBarycenter);
 
   static int AddTriangles(CoredMeshData *mesh,
-                          std::vector< CoredPointIndex > edges[3],
-                          std::vector< Point3D< float > > *interiorPositions,
-                          const int & offSet);
-
-  static int AddTriangles(CoredMeshData *mesh,
                           std::vector< CoredPointIndex > & edges,
                           std::vector< Point3D< float > > *interiorPositions,
                           const int & offSet,
