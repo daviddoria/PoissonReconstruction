@@ -33,6 +33,9 @@
 
 #ifndef HASH_INCLUDED
 #define HASH_INCLUDED
+
+#if __cplusplus < 201103L
+
 #ifdef WIN32
 #include <hash_map>
 using stdext::hash_map;
@@ -61,4 +64,11 @@ struct hash< const unsigned long long > {
 };
 }
 #endif // WIN32
+
+#else // __cplusplus >= 201103L
+#include <unordered_map>
+template<class Key, class Value>
+using hash_map = std::unordered_map<Key, Value>;
+#endif // __cplusplus
+
 #endif // HASH_INCLUDED
