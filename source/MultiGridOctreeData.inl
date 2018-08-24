@@ -1652,7 +1652,6 @@ inline Real Octree<Degree>::GetIsoValue(void)
 		fData.setValueTables(fData.VALUE_FLAG,0);
 		cf.valueTables=fData.valueTables;
 		cf.res2=fData.res2;
-		Real myRadius=radius;
 		isoValue=weightSum=0;
 		temp=tree.nextNode();
 		while(temp){
@@ -2662,7 +2661,9 @@ int Octree<Degree>::AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIn
           bool isCoplanar = false;
 
           for( size_t i=0 ; i<edges.size() ; i++ )
+          {
             for( size_t j=0 ; j<i ; j++ )
+            {
               if( (i+1)%edges.size()!=j && (j+1)%edges.size()!=i )
               {
                 Point3D< Real > v1 , v2;
@@ -2672,7 +2673,9 @@ int Octree<Degree>::AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIn
                 else for( int k=0 ; k<3 ; k++ ) v2.coords[k] = (*interiorPositions)[ edges[j].index-offSet ].coords[k];
                 for( int k=0 ; k<3 ; k++ ) if( v1.coords[k]==v2.coords[k] ) isCoplanar = true;
               }
-            if( addBarycenter && isCoplanar )
+            }
+          }
+          if( addBarycenter && isCoplanar )
 #else
           if( addBarycenter )
 #endif
