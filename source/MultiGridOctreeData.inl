@@ -1652,7 +1652,6 @@ inline Real Octree<Degree>::GetIsoValue(void)
 		fData.setValueTables(fData.VALUE_FLAG,0);
 		cf.valueTables=fData.valueTables;
 		cf.res2=fData.res2;
-		Real myRadius=radius;
 		isoValue=weightSum=0;
 		temp=tree.nextNode();
 		while(temp){
